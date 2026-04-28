@@ -7,4 +7,4 @@ numpy>=1.26.0
 WMI>=1.5.1; sys_platform == "win32"
 pywin32>=306; sys_platform == "win32"
 # Build
-pyinstaller>=6.3.0
+pyinstaller>=6.20.0
