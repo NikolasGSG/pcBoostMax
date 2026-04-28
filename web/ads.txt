@@ -1,0 +1,15 @@
+# ads.txt — Authorised Digital Sellers for this domain.
+#
+# AdSense will reject your account until this file is reachable at the site
+# root with your real publisher ID. After AdSense approves you, replace the
+# placeholder ID below with the value you see at:
+#
+#   AdSense → Sites → Get the snippet → ads.txt
+#
+# Format reference: https://iabtechlab.com/wp-content/uploads/2019/03/IAB-OpenRTB-Ads.txt-Public-Spec-1.0.2.pdf
+
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+
+# Microsoft Advertising
+# Microsoft does not currently require an entry in ads.txt for the audience
+# network. If they ask for one in your dashboard, paste it below.

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GameBoost — Free Windows performance optimizer for gamers</title>
+<meta name="description" content="Free Windows performance optimizer for gamers. Apply tunable rules, monitor FPS, clean junk, all in one obsidian-black HUD.">
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%2306080B'/><path d='M22 14l-8 22h12l-4 14 18-26H28l4-10z' fill='%23A6FF00'/></svg>">
+
+<!-- AdSense auto-ads (uncomment + replace ca-pub-XXXX after approval) -->
+<!--
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
+
+<!-- Microsoft Advertising UET (uncomment + replace YOUR_TAG_ID after approval) -->
+<!--
+<script>(function(w,d,t,r,u){var f,n,i;w[u]=w[u]||[],f=function(){var o={ti:"YOUR_TAG_ID"};o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")},n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function(){var s=this.readyState;s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)},i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)})(window,document,"script","//bat.bing.com/bat.js","uetq");</script>
+-->
+
+<style>
+:root {
+  --bg: #06080B;
+  --surface: #0C1014;
+  --border: #1B232E;
+  --text: #EAF1FA;
+  --muted: #7E8C9F;
+  --accent: #A6FF00;
+  --cyan: #00E4FF;
+  --violet: #B070FF;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.55 'Segoe UI Variable','Segoe UI',Inter,system-ui,sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 24px; }
+header { padding: 56px 24px 24px; }
+.eyebrow {
+  font: 11px/1 'Segoe UI Variable',sans-serif;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
+h1 {
+  font-size: clamp(40px, 7vw, 72px);
+  line-height: 1;
+  margin: 16px 0 12px;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+h1 em { color: var(--accent); font-style: normal; }
+.lead {
+  font-size: 19px;
+  color: var(--muted);
+  max-width: 640px;
+  margin: 0 0 32px;
+}
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  border: 1px solid transparent;
+  transition: transform .12s ease, background .12s ease;
+}
+.btn-primary { background: var(--accent); color: #04140A; }
+.btn-primary:hover { background: #B6FF33; transform: translateY(-1px); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--border); }
+.btn-ghost:hover { background: var(--surface); }
+.note { font-size: 13px; color: var(--muted); }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+  gap: 18px;
+  margin: 56px 0;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+.card h3 { margin: 0 0 8px; font-size: 17px; color: var(--text); }
+.card p  { margin: 0; color: var(--muted); font-size: 14px; }
+.card .num { font: 700 28px/1 'Bahnschrift Condensed','Bahnschrift',sans-serif; color: var(--accent); display: block; margin-bottom: 8px; letter-spacing: -.01em; }
+
+footer {
+  border-top: 1px solid var(--border);
+  margin-top: 80px;
+  padding: 24px 0;
+  color: var(--muted);
+  font-size: 13px;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+footer a { color: var(--muted); text-decoration: none; margin-right: 14px; }
+footer a:hover { color: var(--text); }
+
+a { color: var(--cyan); }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">GameBoost · v2.1</div>
+    <h1>Tune your PC for the <em>game in front of you</em>.</h1>
+    <p class="lead">
+      A Windows performance optimizer that explains every change, rolls back
+      every action, and runs entirely on your machine. Free forever, ads-supported.
+    </p>
+    <div class="cta-row">
+      <!-- Replace the version once you have your first GitHub Release -->
+      <a class="btn btn-primary"
+         href="https://github.com/NikolasGSG/pcBoostMax/releases/latest/download/GameBoost-2.1.0-x64.exe">
+        Download for Windows ↓
+      </a>
+      <a class="btn btn-ghost" href="https://github.com/NikolasGSG/pcBoostMax">View source on GitHub</a>
+    </div>
+    <p class="note" style="margin-top:14px;">
+      Windows 10/11 · 64-bit · ~40 MB · No installer required.
+    </p>
+  </header>
+
+  <section class="grid">
+    <div class="card">
+      <span class="num">12+</span>
+      <h3>Tabs and tools</h3>
+      <p>Dashboard, Optimize, Game Hub, Game Mode, Monitor, Insights, Tools, Stats, Overlay, Cleanup, Safety, Settings.</p>
+    </div>
+    <div class="card">
+      <span class="num">100%</span>
+      <h3>Reversible</h3>
+      <p>Every applied rule is backed up. One-click rollback from the Safety tab. Optional Windows Restore Point before each plan.</p>
+    </div>
+    <div class="card">
+      <span class="num">0</span>
+      <h3>Telemetry SDKs in the binary</h3>
+      <p>No analytics. No phone-home. The desktop app runs no third-party JavaScript.</p>
+    </div>
+    <div class="card">
+      <span class="num">~50</span>
+      <h3>Hand-curated optimization rules</h3>
+      <p>Each one explains <em>what</em> it changes and <em>why</em>. Risk + impact badges on every card.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div>© 2026 The GameBoost Project</div>
+    <nav>
+      <a href="./privacy.html">Privacy</a>
+      <a href="./sponsor/">Sponsor / Deals</a>
+      <a href="https://github.com/NikolasGSG/pcBoostMax/releases">Releases</a>
+      <a href="https://github.com/NikolasGSG/pcBoostMax/issues/new/choose">Report a bug</a>
+    </nav>
+  </footer>
+</div>
+</body>
+</html>

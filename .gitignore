@@ -1,0 +1,60 @@
+# --------------------------------------------------------------------
+# GameBoost — git ignore
+# --------------------------------------------------------------------
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.eggs/
+*.pyo
+*.pyd
+
+# ---- Virtual envs ----
+.venv/
+venv/
+env/
+ENV/
+
+# ---- PyInstaller / build artefacts ----
+build/
+dist/
+*.manifest
+*.spec.bak
+
+# ---- IDE / editor ----
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ---- Test / coverage ----
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ---- App runtime data (never commit user data!) ----
+# This protects against accidentally committing local state if you
+# ever symlink %LOCALAPPDATA%\GameBoostOptimizer into the repo.
+GameBoostOptimizer/
+*.log
+ads_manifest.json
+
+# ---- OS junk ----
+ehthumbs.db
+desktop.ini
+
+# ---- Secrets ----
+.env
+.env.*
+secrets/
+*.key
+*.pem
+*.pfx

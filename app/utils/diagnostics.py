@@ -1,0 +1,150 @@
+"""Build a zipped diagnostic bundle for troubleshooting.
+
+The bundle is intentionally minimal and privacy-respecting. Everything in
+it is data the user already sees in the UI. Specifically, it contains:
+
+* ``gameboost.log``       last ~500 KB of the rolling app log
+* ``actions.jsonl``       the action-history store (rules applied / rolled back)
+* ``hardware.json``       the hardware snapshot (CPU / GPU / RAM, no serials)
+* ``plan.json``           the currently-generated optimization plan
+* ``system.txt``          Windows build, Python, psutil, PyQt versions
+* ``config.json``         user config (disclaimer flag, overlay prefs, …)
+
+Nothing in here contains personal paths beyond ``%LOCALAPPDATA%\\GameBoostOptimizer``,
+no network data, no process memory.
+"""
+from __future__ import annotations
+
+import json
+import platform
+import sys
+import time
+import zipfile
+from dataclasses import asdict
+from pathlib import Path
+from typing import Any, Optional
+
+from .logger import get_logger
+from .paths import APP_DATA_DIR, CONFIG_FILE, HISTORY_DIR, LOG_DIR
+
+log = get_logger("utils.diagnostics")
+
+
+# Max number of bytes we ship from the tail of the log file.
+_LOG_TAIL_BYTES = 500 * 1024
+
+
+def _tail_bytes(path: Path, n: int) -> bytes:
+    if not path.exists():
+        return b""
+    try:
+        with path.open("rb") as fh:
+            fh.seek(0, 2)
+            size = fh.tell()
+            fh.seek(max(0, size - n))
+            return fh.read()
+    except Exception:
+        log.debug("tail_bytes failed for %s", path, exc_info=True)
+        return b""
+
+
+def _system_info() -> str:
+    lines = [
+        "GameBoost diagnostics bundle",
+        f"Generated: {time.strftime('%Y-%m-%dT%H:%M:%S%z')}",
+        "",
+        f"OS:      {platform.system()} {platform.release()} (build {platform.version()})",
+        f"Arch:    {platform.machine()}",
+        f"Python:  {sys.version.split()[0]}",
+    ]
+    # psutil / PyQt6 are optional; catch gracefully.
+    try:
+        import psutil
+        lines.append(f"psutil:  {psutil.__version__}")
+    except Exception:
+        pass
+    try:
+        from PyQt6.QtCore import QT_VERSION_STR, PYQT_VERSION_STR
+        lines.append(f"PyQt6:   {PYQT_VERSION_STR} (Qt {QT_VERSION_STR})")
+    except Exception:
+        pass
+    return "\n".join(lines) + "\n"
+
+
+def export_bundle(
+    destination: Path,
+    *,
+    hardware: Optional[Any] = None,
+    plan: Optional[Any] = None,
+) -> Path:
+    """Write a zip bundle to ``destination``. Returns the final path.
+
+    ``hardware`` and ``plan`` are optional — if supplied, they'll be
+    serialised with dataclasses' ``asdict`` so we only include the fields
+    they've explicitly declared.
+    """
+    destination = Path(destination).with_suffix(".zip")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+
+    with zipfile.ZipFile(destination, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        # -- logs (tail only)
+        log_path = LOG_DIR / "gameboost.log"
+        data = _tail_bytes(log_path, _LOG_TAIL_BYTES)
+        if data:
+            zf.writestr("gameboost.log", data)
+
+        # -- action history
+        history_path = HISTORY_DIR / "actions.jsonl"
+        if history_path.exists():
+            zf.writestr("actions.jsonl", history_path.read_bytes())
+
+        # -- config
+        if CONFIG_FILE.exists():
+            zf.writestr("config.json", CONFIG_FILE.read_bytes())
+
+        # -- hardware snapshot
+        if hardware is not None:
+            try:
+                zf.writestr("hardware.json",
+                            json.dumps(asdict(hardware), indent=2, default=str))
+            except Exception:
+                log.debug("could not serialise hardware", exc_info=True)
+
+        # -- plan
+        if plan is not None:
+            try:
+                serialised = {
+                    "generated_at": getattr(plan, "generated_at", None),
+                    "expected_score": getattr(plan, "expected_score", None),
+                    "actions": [
+                        {
+                            "rule_id": a.rule.id,
+                            "title": a.rule.title,
+                            "category": a.rule.category,
+                            "risk": a.rule.risk,
+                            "impact": a.rule.impact,
+                            "selected": a.selected,
+                            "score": a.evaluation.score,
+                            "reason": a.evaluation.reason,
+                        }
+                        for a in plan.actions
+                    ],
+                }
+                zf.writestr("plan.json", json.dumps(serialised, indent=2, default=str))
+            except Exception:
+                log.debug("could not serialise plan", exc_info=True)
+
+        # -- system info
+        zf.writestr("system.txt", _system_info())
+
+        # -- human-readable manifest
+        zf.writestr(
+            "README.txt",
+            "This bundle was generated by GameBoost for troubleshooting.\n"
+            "It contains no personal data beyond the paths under "
+            f"{APP_DATA_DIR!s}.\n"
+            "Safe to share with whoever is helping you diagnose a problem.\n",
+        )
+
+    log.info("Diagnostics bundle written to %s", destination)
+    return destination

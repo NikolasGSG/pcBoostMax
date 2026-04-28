@@ -1,0 +1,64 @@
+GameBoost — Proprietary Software Licence
+Copyright (c) 2026 The GameBoost Project. All rights reserved.
+
+================================================================================
+
+1. GRANT OF LICENCE
+   Subject to the terms below, the copyright holder ("we", "us") grants you
+   ("the user") a personal, non-exclusive, non-transferable, revocable licence
+   to install and use the compiled GameBoost binary on Microsoft Windows
+   computers that you own or are authorised to administer.
+
+2. RESTRICTIONS
+   You MAY NOT, without prior written permission from the copyright holder:
+
+   (a) copy, redistribute, sub-licence, sell, lease, or rent the software, the
+       compiled binary, the source code, or any derivative work;
+   (b) reverse-engineer, decompile, or disassemble the binary except where the
+       law of your jurisdiction expressly permits such acts notwithstanding
+       this restriction;
+   (c) remove or alter any copyright, trademark, or attribution notice;
+   (d) use the source code or any portion of it as the basis for a competing
+       product, whether commercial or free;
+   (e) distribute the software bundled with malware, adware (other than the
+       monetisation surfaces already built into the official build), or any
+       other harmful payload.
+
+3. SOURCE-AVAILABLE
+   The source code is published on a public Git repository for the purposes of
+   transparency and security review. Public visibility does not constitute a
+   grant of any rights beyond those set out in section 1.
+
+4. CONTRIBUTIONS
+   If you submit a pull request, bug report, or other contribution to the
+   public repository, you grant the copyright holder a perpetual, irrevocable,
+   royalty-free, worldwide licence to use, modify, and incorporate that
+   contribution into the software under any terms, including the terms of
+   this Licence.
+
+5. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL
+   THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY
+   ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+   OTHER DEALINGS IN THE SOFTWARE, INCLUDING WITHOUT LIMITATION ANY SYSTEM
+   INSTABILITY THAT FOLLOWS FROM APPLYING ANY OPTIMISATION RULE EXPOSED BY
+   THE APPLICATION.
+
+6. PRIVACY
+   The software's data-handling behaviour is documented in PRIVACY.md.
+
+7. TERMINATION
+   This Licence terminates automatically if you breach any of its terms. On
+   termination, you must uninstall the software and destroy all copies in
+   your possession.
+
+8. GOVERNING LAW
+   This Licence is governed by the laws of the copyright holder's country of
+   residence, without regard to its conflict-of-law provisions.
+
+================================================================================
+
+For licensing enquiries (commercial, white-label, OEM bundling) please open
+an issue on the public repository tagged "licensing".

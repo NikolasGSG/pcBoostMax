@@ -1,0 +1,125 @@
+name: Build & Release
+
+# Triggered when you push a tag like `v2.1.0`. Builds the Windows exe with
+# PyInstaller, attaches it to a GitHub Release, and produces a stable
+# download URL the Microsoft Store / installer mirrors can point at.
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:        # let you also build a release manually
+
+permissions:
+  contents: write           # needed to create the GitHub Release
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install build deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Compute version from tag
+        id: ver
+        shell: bash
+        run: |
+          # Drop the leading 'v' from the tag for the artifact filename
+          TAG=${GITHUB_REF##*/}
+          VERSION=${TAG#v}
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Build exe
+        run: python build_exe.py
+
+      - name: Rename artefact for clarity
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          Move-Item dist/GameBoost.exe "dist/GameBoost-$version-x64.exe"
+
+      - name: Smoke-test the binary
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          $exe = (Resolve-Path "./dist/GameBoost-$version-x64.exe").Path
+          if (-not (Test-Path $exe)) {
+            Get-ChildItem dist
+            throw "Built artefact not found at $exe"
+          }
+          Write-Host "================ binary smoke ================"
+          Write-Host "Resolved exe: $exe"
+          # The binary is built with PyInstaller --windowed, which makes it
+          # a Windows GUI-subsystem app. PowerShell's `& $exe 2>&1` capture
+          # cannot read its stdout (the C runtime detaches stdio for GUI
+          # apps), and `$LASTEXITCODE` ends up null. Use Start-Process with
+          # -Wait -PassThru to reliably get the kernel-level exit code.
+          # Output goes to a temp file so we can show it on failure.
+          $stdout = Join-Path $env:RUNNER_TEMP "smoke_stdout.log"
+          $stderr = Join-Path $env:RUNNER_TEMP "smoke_stderr.log"
+          $proc = Start-Process -FilePath $exe `
+              -ArgumentList @("--cli","services","list") `
+              -RedirectStandardOutput $stdout `
+              -RedirectStandardError $stderr `
+              -Wait -PassThru -WindowStyle Hidden
+          $ec = $proc.ExitCode
+          Write-Host "Binary exited with code: $ec"
+          if (Test-Path $stdout) {
+            Write-Host "---- stdout ----"
+            Get-Content $stdout | ForEach-Object { Write-Host $_ }
+          }
+          if (Test-Path $stderr) {
+            Write-Host "---- stderr ----"
+            Get-Content $stderr | ForEach-Object { Write-Host $_ }
+          }
+          if ($ec -ne 0) {
+            throw "Smoke test failed: binary exited with $ec"
+          }
+          Write-Host "Smoke test PASSED (binary launched, ran '--cli services list', exited 0)."
+
+      - name: Generate SHA256
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          $hash = (Get-FileHash -Algorithm SHA256 "dist/GameBoost-$version-x64.exe").Hash.ToLower()
+          "$hash  GameBoost-$version-x64.exe" | Out-File -FilePath "dist/GameBoost-$version-x64.exe.sha256" -Encoding ascii
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: GameBoost ${{ steps.ver.outputs.version }}
+          body: |
+            **GameBoost ${{ steps.ver.outputs.version }}** — Windows x64 build.
+
+            See `CHANGELOG.md` for the full list of changes.
+
+            ## Verifying the download
+            ```powershell
+            (Get-FileHash -Algorithm SHA256 GameBoost-${{ steps.ver.outputs.version }}-x64.exe).Hash
+            ```
+            should match the value inside `GameBoost-${{ steps.ver.outputs.version }}-x64.exe.sha256`.
+          files: |
+            dist/GameBoost-${{ steps.ver.outputs.version }}-x64.exe
+            dist/GameBoost-${{ steps.ver.outputs.version }}-x64.exe.sha256
+          draft: false
+          prerelease: false

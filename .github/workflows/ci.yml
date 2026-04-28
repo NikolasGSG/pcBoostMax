@@ -1,0 +1,95 @@
+name: CI
+
+# Runs on every push to main and on every pull request. We do *not* build
+# the full exe here — that takes ~2 min and is only needed when tagging.
+# Instead we run a fast Python-level smoke test that imports the controller,
+# bootstraps it, and constructs every QWidget view in the offscreen Qt
+# platform. Catches 95% of regressions for ~30 s of CI time.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install runtime deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compile every Python file
+        run: python -m compileall -q app main.py
+
+      - name: Bootstrap controller + every view (offscreen Qt)
+        env:
+          QT_QPA_PLATFORM: offscreen
+          PYTHONFAULTHANDLER: '1'
+          PYTHONUNBUFFERED: '1'
+        shell: pwsh
+        run: |
+          # Drop the python source to a real file so traceback line numbers are
+          # meaningful (vs "<string>") if anything fails.
+          @'
+          import os, sys, traceback
+          try:
+              from PyQt6.QtWidgets import QApplication
+              app = QApplication([])
+              from app.core.app_controller import AppController
+              from app.ui.theme.theme import Theme
+              from app.ui.main_window import MainWindow
+
+              ctrl = AppController()
+              ctrl.bootstrap(async_hardware=False)
+              window = MainWindow(ctrl, Theme())
+
+              # Force every lazy view to build so we catch wiring errors here,
+              # not in production.
+              for view_id in (
+                  "dashboard", "games", "optimize", "game_mode", "monitor",
+                  "insights", "tools", "stats", "overlay", "cleanup", "safety", "settings",
+              ):
+                  w = window._build_view(view_id)
+                  assert w is not None, f"Failed to build view: {view_id}"
+
+              print("CI smoke OK")
+              # Bypass Python's GC-triggered Qt teardown; some background
+              # threads (AdBanner fetch, hardware probes) are still alive
+              # and Qt fastfails on exit otherwise (0xC0000409).
+              sys.stdout.flush()
+              os._exit(0)
+          except Exception:
+              traceback.print_exc()
+              os._exit(1)
+          '@ | Set-Content -Path ci_smoke.py -Encoding utf8
+          python ci_smoke.py
+          if ($LASTEXITCODE -ne 0) { throw "Smoke bootstrap failed (exit $LASTEXITCODE)" }
+
+      - name: CLI smoke
+        env:
+          QT_QPA_PLATFORM: offscreen
+          PYTHONFAULTHANDLER: '1'
+          PYTHONUNBUFFERED: '1'
+        shell: pwsh
+        run: |
+          python main.py --cli services list
+          if ($LASTEXITCODE -ne 0) { throw "CLI 'services list' failed (exit $LASTEXITCODE)" }
+          python main.py --cli services recommendations
+          if ($LASTEXITCODE -ne 0) { throw "CLI 'services recommendations' failed (exit $LASTEXITCODE)" }

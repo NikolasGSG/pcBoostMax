@@ -1,0 +1,51 @@
+name: Deploy GitHub Pages
+
+# Deploys the static site under /web to GitHub Pages on every push to main.
+# This is what hosts:
+#   * the project landing page,
+#   * the /sponsor/ page where AdSense + Microsoft Ads run legitimately,
+#   * the /ads/manifest.json the desktop app fetches,
+#   * the /privacy.html public mirror of PRIVACY.md.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'PRIVACY.md'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static site artefact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
