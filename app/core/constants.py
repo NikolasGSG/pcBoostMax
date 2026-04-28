@@ -3,7 +3,7 @@ from __future__ import annotations
 
 APP_NAME = "GameBoost APEX"
 APP_SHORT = "GameBoost"
-APP_VERSION = "2.1.0"
+APP_VERSION = "2.1.1"
 ORG_NAME = "GameBoost"
 
 # Monitoring cadence

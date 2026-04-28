@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GameBoost — EXE Return Codes</title>
+<meta name="description" content="Documentation of the return-code values emitted by GameBoost.exe. Used by installers, automation scripts, and the Microsoft Store certification team.">
+<link rel="canonical" href="https://nikolasgsg.github.io/pcBoostMax/docs/exit-codes.html">
+
+<style>
+:root {
+  --bg: #06080B;
+  --surface: #0C1014;
+  --border: #1A1F26;
+  --text: #E5EDF6;
+  --muted: #8B95A1;
+  --accent: #A6FF00;
+  --accent-cyan: #00E4FF;
+  --warn: #FFB04A;
+  --crit: #FF5577;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+.wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 64px 24px 96px;
+}
+header { margin-bottom: 48px; }
+h1 {
+  font-size: 36px;
+  margin: 0 0 12px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+h1 .accent { color: var(--accent); }
+h2 {
+  font-size: 22px;
+  margin: 48px 0 16px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+h3 {
+  font-size: 17px;
+  margin: 32px 0 12px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+p { color: var(--text); }
+small, .muted { color: var(--muted); }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+th, td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  vertical-align: top;
+}
+th {
+  background: #0A0D11;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 12px;
+}
+td.code {
+  font-family: "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  font-weight: 600;
+  white-space: nowrap;
+}
+td.code.success { color: var(--accent); }
+td.code.warn    { color: var(--warn); }
+td.code.crit    { color: var(--crit); }
+code {
+  font-family: "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  background: #0A0D11;
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 13px;
+  color: var(--accent);
+}
+pre {
+  background: #0A0D11;
+  border: 1px solid var(--border);
+  padding: 16px;
+  overflow-x: auto;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text);
+}
+.note {
+  background: rgba(166, 255, 0, 0.06);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+}
+footer {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+}
+footer a { color: var(--accent-cyan); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+a { color: var(--accent-cyan); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>GameBoost <span class="accent">EXE Return Codes</span></h1>
+  <p class="muted">
+    Documentation of every process exit code emitted by
+    <code>GameBoost.exe</code>. Used by deployment scripts, MDM systems,
+    silent-installer wrappers, and the Microsoft Store certification team.
+  </p>
+  <p class="muted">
+    <strong>Last updated:</strong> 2026-04-28 · <strong>Applies to:</strong>
+    GameBoost 2.1.0 and later.
+  </p>
+</header>
+
+<h2>Summary table</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 110px;">Code</th>
+      <th style="width: 130px;">Symbol</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="code success">0</td>
+      <td>EXIT_SUCCESS</td>
+      <td>
+        Normal termination. The requested operation completed
+        successfully or there was nothing to do.
+      </td>
+    </tr>
+    <tr>
+      <td class="code warn">1</td>
+      <td>EXIT_FAILURE</td>
+      <td>
+        Generic command-specific failure. One or more sub-operations
+        could not be completed. Always accompanied by a human-readable
+        message on <code>stderr</code>.
+      </td>
+    </tr>
+    <tr>
+      <td class="code warn">2</td>
+      <td>EXIT_INVALID</td>
+      <td>
+        The CLI command, sub-command, or argument was not recognised.
+        Equivalent to argparse's <code>SystemExit(2)</code>.
+      </td>
+    </tr>
+    <tr>
+      <td class="code warn">130</td>
+      <td>EXIT_CANCELLED</td>
+      <td>
+        The user interrupted the operation with Ctrl+C
+        (<code>SIGINT</code>). Standard POSIX convention
+        <code>128 + signal_number</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <strong>Note for installers and silent-deploy wrappers.</strong>
+  Exit code <code>0</code> is the only value that indicates a successful
+  install or apply step. Any non-zero value should be treated as a
+  recoverable failure unless the documentation here flags it otherwise.
+</div>
+
+<h2>Per-command details</h2>
+
+<h3>GUI launch — no <code>--cli</code> flag</h3>
+<p>
+  Launching <code>GameBoost.exe</code> without arguments opens the Qt
+  graphical interface. The process returns <code>0</code> when the user
+  closes the main window normally, or <code>1</code> if a fatal Qt
+  exception occurred during start-up (for example, no display server in
+  Windows Server Core). The detail of any fatal exception is written to
+  <code>%APPDATA%\GameBoost\logs\gameboost.log</code>.
+</p>
+
+<h3><code>--cli optimize</code></h3>
+<table>
+  <tr><td class="code success">0</td><td>Plan generated (dry-run) or applied with no failed actions.</td></tr>
+  <tr><td class="code warn">1</td><td>One or more rules failed to apply. The exit message lists how many succeeded vs failed.</td></tr>
+</table>
+
+<h3><code>--cli diagnose &lt;symptom&gt;</code></h3>
+<table>
+  <tr><td class="code success">0</td><td>Diagnosis run completed (regardless of whether issues were found).</td></tr>
+</table>
+
+<h3><code>--cli inspect &lt;target&gt;</code></h3>
+<table>
+  <tr><td class="code success">0</td><td>Inspection completed (findings printed; absence of findings is also success).</td></tr>
+</table>
+
+<h3><code>--cli bench &lt;kind&gt;</code></h3>
+<table>
+  <tr><td class="code success">0</td><td>Benchmark completed.</td></tr>
+  <tr><td class="code warn">1</td><td>Boot benchmark failed (typically permissions — Get-WinEvent without admin).</td></tr>
+</table>
+
+<h3><code>--cli memory &lt;action&gt;</code></h3>
+<table>
+  <tr><td class="code success">0</td><td>Status reported, or trim attempted (partial trim still returns 0).</td></tr>
+</table>
+
+<h3><code>--cli rollback &lt;scope&gt;</code></h3>
+<table>
+  <tr><td class="code success">0</td><td>Rollback completed (or there was nothing to roll back).</td></tr>
+  <tr><td class="code warn">1</td><td>The targeted rollback action failed. Run <code>GameBoost --cli rollback session</code> to retry.</td></tr>
+</table>
+
+<h3><code>--cli services &lt;action&gt;</code></h3>
+<table>
+  <tr><td class="code success">0</td><td>List, recommendations, or restore completed.</td></tr>
+  <tr><td class="code warn">1</td><td>One or more service changes could not be applied (insufficient privileges or pinned by Group Policy).</td></tr>
+</table>
+
+<h2>System-level codes that can also surface</h2>
+<p class="muted">
+  These are not emitted by GameBoost itself, but by the Windows kernel /
+  C runtime if the process terminates abnormally. They are documented
+  here for completeness.
+</p>
+<table>
+  <thead>
+    <tr><th style="width: 200px;">Hex / Decimal</th><th>Meaning</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="code crit">0xC0000005<br>3221225477</td>
+      <td>Access violation — corrupted memory write. Please file a bug report at the issues tracker with steps to reproduce.</td>
+    </tr>
+    <tr>
+      <td class="code crit">0xC000007B<br>3221225595</td>
+      <td>Invalid image format — antivirus quarantined a runtime DLL or the binary download was corrupted. Re-download the .exe and verify the SHA256 published next to the release.</td>
+    </tr>
+    <tr>
+      <td class="code crit">0xC0000409<br>3221266694</td>
+      <td>Stack buffer overrun. Reported as a Qt teardown race in PyInstaller 6.x — fully mitigated in GameBoost 2.1.0 and later by an explicit <code>os._exit()</code> from the CLI path.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>How to capture the exit code</h2>
+
+<h3>PowerShell</h3>
+<pre>$proc = Start-Process -FilePath ".\GameBoost.exe" `
+    -ArgumentList "--cli","services","list" `
+    -Wait -PassThru -WindowStyle Hidden
+$proc.ExitCode  # 0 on success</pre>
+
+<p class="muted">
+  Note: the PowerShell <code>&amp;</code> call operator returns
+  <code>$LASTEXITCODE</code> as <code>$null</code> for the
+  windowed-subsystem GameBoost.exe because the C runtime detaches stdio.
+  Use <code>Start-Process -Wait -PassThru</code> instead — it reads the
+  exit code via <code>GetExitCodeProcess</code> at the kernel level.
+</p>
+
+<h3>Command Prompt (cmd.exe)</h3>
+<pre>GameBoost.exe --cli optimize --plan max-perf
+echo %ERRORLEVEL%</pre>
+
+<h3>Python <code>subprocess</code></h3>
+<pre>import subprocess
+result = subprocess.run(
+    ["GameBoost.exe", "--cli", "bench", "ping"],
+    capture_output=True, text=True, check=False,
+)
+print(result.returncode)  # 0 on success</pre>
+
+<footer>
+  <p>
+    GameBoost is open-source. The canonical source for these codes is
+    <a href="https://github.com/NikolasGSG/pcBoostMax/blob/main/app/cli/runner.py">app/cli/runner.py</a>
+    in the public repository.
+  </p>
+  <p>
+    <a href="../">← Home</a> ·
+    <a href="../privacy.html">Privacy</a> ·
+    <a href="https://github.com/NikolasGSG/pcBoostMax">Source</a>
+  </p>
+</footer>
+</div>
+</body>
+</html>

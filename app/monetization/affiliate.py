@@ -53,39 +53,19 @@ class AffiliateRegistry:
 
 
 def default_registry() -> AffiliateRegistry:
-    """Built-in partners. Replace the URLs with your real tracked ones.
+    """Built-in partners shipped with GameBoost.
 
-    All URLs use placeholder query params that you should swap with your
-    real partner ids before shipping.
+    Active programmes:
+      * Amazon Associates  (tag=ngsgsoftworks-20)
+
+    Pending programmes (kept here as commented templates so they can be
+    enabled by replacing the placeholder ID and uncommenting):
+      * Awin           — for Razer / Corsair / MSI etc. once approved
+      * Impact / CJ    — for VPN partners (NordVPN, Surfshark)
+      * IObit Direct   — for Driver Booster
     """
     return AffiliateRegistry([
-        # --- Drivers / system utilities ---
-        AffiliateLink(
-            id="driver-booster",
-            label="Update drivers automatically",
-            url="https://www.iobit.com/en/driver-booster.php?ref=YOUR_AFFILIATE_ID",
-            partner="IObit Driver Booster",
-            payout_hint="$2 per install",
-            category="driver",
-        ),
-        # --- VPN / network ---
-        AffiliateLink(
-            id="nordvpn",
-            label="Lower your ping with NordVPN",
-            url="https://nordvpn.com/?utm_medium=affiliate&utm_term=YOUR_REF",
-            partner="NordVPN",
-            payout_hint="$40-80 per signup",
-            category="vpn",
-        ),
-        AffiliateLink(
-            id="cloudflare-warp",
-            label="Try Cloudflare WARP (free)",
-            url="https://1.1.1.1/?ref=YOUR_REF",
-            partner="Cloudflare WARP",
-            payout_hint="brand awareness",
-            category="vpn",
-        ),
-        # --- Hardware ---
+        # --- Hardware (Amazon Associates — active) ----------------------
         AffiliateLink(
             id="samsung-990-pro",
             label="Upgrade to Samsung 990 Pro NVMe",
@@ -110,4 +90,56 @@ def default_registry() -> AffiliateRegistry:
             payout_hint="1-4% AOV",
             category="hardware",
         ),
+        AffiliateLink(
+            id="logitech-g502-x",
+            label="Logitech G502 X — gaming mouse",
+            url="https://www.amazon.com/dp/B0B7Y6S58K/?tag=ngsgsoftworks-20",
+            partner="Amazon Associates",
+            payout_hint="1-4% AOV",
+            category="hardware",
+        ),
+        AffiliateLink(
+            id="seasonic-focus-gx-850",
+            label="Seasonic Focus GX-850 PSU — 80+ Gold",
+            url="https://www.amazon.com/dp/B07F3PMP2W/?tag=ngsgsoftworks-20",
+            partner="Amazon Associates",
+            payout_hint="1-4% AOV",
+            category="hardware",
+        ),
+        AffiliateLink(
+            id="noctua-nh-d15",
+            label="Noctua NH-D15 — silent CPU cooler",
+            url="https://www.amazon.com/dp/B00L7UZMAK/?tag=ngsgsoftworks-20",
+            partner="Amazon Associates",
+            payout_hint="1-4% AOV",
+            category="hardware",
+        ),
+        # ----------------------------------------------------------------
+        # PENDING PROGRAMMES — enable when approval lands.
+        # Replace the placeholder, then uncomment the AffiliateLink(...).
+        # ----------------------------------------------------------------
+        # AffiliateLink(
+        #     id="razer-blackwidow",
+        #     label="Razer BlackWidow V4 — gaming keyboard",
+        #     url="https://www.awin1.com/cread.php?awinmid=AWIN_MID&awinaffid=AWIN_AFFID&clickref=&ued=https%3A%2F%2Fwww.razer.com%2Fgaming-keyboards%2Frazer-blackwidow-v4",
+        #     partner="Razer (via Awin)",
+        #     payout_hint="4-10% AOV",
+        #     category="hardware",
+        # ),
+        # AffiliateLink(
+        #     id="nordvpn",
+        #     label="Lower your ping with NordVPN",
+        #     url="https://go.nordvpn.net/aff_c?offer_id=15&aff_id=YOUR_IMPACT_AFFID&url_id=902",
+        #     partner="NordVPN (via Impact)",
+        #     payout_hint="$40-80 per signup",
+        #     category="vpn",
+        # ),
+        # AffiliateLink(
+        #     id="driver-booster",
+        #     label="Update drivers automatically",
+        #     url="https://www.iobit.com/en/driver-booster.php?ref=YOUR_IOBIT_AFFID",
+        #     partner="IObit Driver Booster",
+        #     payout_hint="$2 per install",
+        #     category="driver",
+        # ),
     ])
