@@ -39,8 +39,9 @@ jobs:
         uses: actions/configure-pages@v5
 
       # GitHub Releases serves binaries via a 302 redirect to its CDN, which
-      # Microsoft Partner Center rejects. We mirror the latest release's exe
-      # onto Pages so the install URL is a direct 200 OK with no redirect.
+      # Microsoft Partner Center rejects ("not a Win32 Package"). We mirror
+      # the latest release's installer + portable exe onto Pages so the
+      # install URL is a direct 200 OK with no redirect.
       - name: Mirror latest release binaries to /downloads
         env:
           GH_REPO: ${{ github.repository }}
@@ -54,15 +55,31 @@ jobs:
             exit 0
           fi
           VERSION=${LATEST#v}
-          EXE="GameBoost-${VERSION}-x64.exe"
           BASE="https://github.com/${GH_REPO}/releases/download/${LATEST}"
-          echo "Mirroring ${LATEST} (${EXE}) to Pages /downloads/"
-          curl -fsSL -o "web/downloads/${EXE}" "${BASE}/${EXE}"
-          curl -fsSL -o "web/downloads/${EXE}.sha256" "${BASE}/${EXE}.sha256" || true
-          # Stable "latest" aliases for marketing CTAs that don't pin to a version.
-          cp "web/downloads/${EXE}" "web/downloads/GameBoost-latest-x64.exe"
-          [ -f "web/downloads/${EXE}.sha256" ] && \
-            cp "web/downloads/${EXE}.sha256" "web/downloads/GameBoost-latest-x64.exe.sha256" || true
+          echo "Mirroring ${LATEST} artefacts to Pages /downloads/"
+
+          # 1. Inno Setup installer (canonical Microsoft Partner Center URL).
+          SETUP="GameBoost-${VERSION}-Setup.exe"
+          if curl -fsSL -o "web/downloads/${SETUP}" "${BASE}/${SETUP}"; then
+            curl -fsSL -o "web/downloads/${SETUP}.sha256" "${BASE}/${SETUP}.sha256" || true
+            cp "web/downloads/${SETUP}" "web/downloads/GameBoost-latest-Setup.exe"
+            [ -f "web/downloads/${SETUP}.sha256" ] && \
+              cp "web/downloads/${SETUP}.sha256" "web/downloads/GameBoost-latest-Setup.exe.sha256" || true
+          else
+            echo "::warning::Setup installer ${SETUP} not found in release ${LATEST}"
+          fi
+
+          # 2. Portable PyInstaller exe (legacy / power-user URL).
+          EXE="GameBoost-${VERSION}-x64.exe"
+          if curl -fsSL -o "web/downloads/${EXE}" "${BASE}/${EXE}"; then
+            curl -fsSL -o "web/downloads/${EXE}.sha256" "${BASE}/${EXE}.sha256" || true
+            cp "web/downloads/${EXE}" "web/downloads/GameBoost-latest-x64.exe"
+            [ -f "web/downloads/${EXE}.sha256" ] && \
+              cp "web/downloads/${EXE}.sha256" "web/downloads/GameBoost-latest-x64.exe.sha256" || true
+          else
+            echo "::warning::Portable exe ${EXE} not found in release ${LATEST}"
+          fi
+
           ls -lh web/downloads/
 
       - name: Upload static site artefact
