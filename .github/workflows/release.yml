@@ -75,7 +75,7 @@ jobs:
           "$hash  GameBoost-$version-x64.exe" | Out-File -FilePath "dist/GameBoost-$version-x64.exe.sha256" -Encoding ascii
 
       - name: Upload to GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.ver.outputs.tag }}
           name: GameBoost ${{ steps.ver.outputs.version }}
