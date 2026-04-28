@@ -185,6 +185,69 @@ a { color: var(--accent-cyan); }
   </tbody>
 </table>
 
+<h2>Installer (<code>GameBoost-X.Y.Z-Setup.exe</code>) behaviour</h2>
+
+<p class="muted">
+  The Inno Setup installer is <strong>silent by default</strong> in
+  compliance with Microsoft Store Policy 10.2.9. Launching it without
+  any command-line arguments performs a complete unattended per-user
+  install with no visible UI (UAC may still appear if the system is
+  configured to require elevation).
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 220px;">Flag</th>
+      <th>Behaviour</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="code">(no flags)</td>
+      <td>
+        Silent install. Setup re-spawns itself with
+        <code>/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL</code>
+        and exits the visible instance immediately. This is the path
+        the Microsoft Store certification harness exercises.
+      </td>
+    </tr>
+    <tr>
+      <td class="code">/UI</td>
+      <td>
+        Force the classic interactive wizard. Intended for developers
+        and IT admins; not used by the Store.
+      </td>
+    </tr>
+    <tr>
+      <td class="code">/SILENT</td>
+      <td>Standard Inno Setup silent mode (progress bar shown).</td>
+    </tr>
+    <tr>
+      <td class="code">/VERYSILENT</td>
+      <td>Standard Inno Setup very-silent mode (no UI at all).</td>
+    </tr>
+    <tr>
+      <td class="code">/LOG="path"</td>
+      <td>Write a verbose install log to <code>path</code>.</td>
+    </tr>
+    <tr>
+      <td class="code">/DIR="path"</td>
+      <td>
+        Override the per-user install directory (default
+        <code>%LocalAppData%\Programs\GameBoost</code>).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="muted">
+  Setup exits <code>0</code> on success and a non-zero Inno Setup
+  installer code on failure (see
+  <a href="https://jrsoftware.org/ishelp/index.php?topic=setupexitcodes">
+  Inno Setup exit codes</a>).
+</p>
+
 <div class="note">
   <strong>Note for installers and silent-deploy wrappers.</strong>
   Exit code <code>0</code> is the only value that indicates a successful
