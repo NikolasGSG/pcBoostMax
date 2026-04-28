@@ -96,12 +96,48 @@ jobs:
           }
           Write-Host "Smoke test PASSED (binary launched, ran '--cli services list', exited 0)."
 
-      - name: Generate SHA256
+      - name: Build Inno Setup installer
+        shell: pwsh
+        # Microsoft Partner Center, Chocolatey and most app catalogues
+        # reject raw PyInstaller .exe files as "not a Win32 package".
+        # Wrapping the binary in an Inno Setup installer produces a
+        # recognised, signature-detectable installer they accept.
+        # Inno Setup 6 is pre-installed on `windows-latest` runners.
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            throw "Inno Setup compiler not found at $iscc — runner image changed?"
+          }
+          Write-Host "================ inno setup ================"
+          & $iscc `
+            "/DAppVersion=$version" `
+            "/DSourceExe=..\dist\GameBoost-$version-x64.exe" `
+            installer/GameBoost.iss
+          if ($LASTEXITCODE -ne 0) {
+            throw "Inno Setup compilation failed with exit $LASTEXITCODE"
+          }
+          $setup = "dist/GameBoost-$version-Setup.exe"
+          if (-not (Test-Path $setup)) {
+            Get-ChildItem dist
+            throw "Setup installer missing at $setup"
+          }
+          $size = (Get-Item $setup).Length / 1MB
+          Write-Host ("Installer built: {0} ({1:N1} MB)" -f $setup, $size)
+
+      - name: Generate SHA256 hashes
         shell: pwsh
         run: |
           $version = "${{ steps.ver.outputs.version }}"
-          $hash = (Get-FileHash -Algorithm SHA256 "dist/GameBoost-$version-x64.exe").Hash.ToLower()
-          "$hash  GameBoost-$version-x64.exe" | Out-File -FilePath "dist/GameBoost-$version-x64.exe.sha256" -Encoding ascii
+          foreach ($f in @(
+              "dist/GameBoost-$version-x64.exe",
+              "dist/GameBoost-$version-Setup.exe"
+          )) {
+            $hash = (Get-FileHash -Algorithm SHA256 $f).Hash.ToLower()
+            $name = Split-Path $f -Leaf
+            "$hash  $name" | Out-File -FilePath "$f.sha256" -Encoding ascii
+            Write-Host "$name -> $hash"
+          }
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
@@ -111,14 +147,27 @@ jobs:
           body: |
             **GameBoost ${{ steps.ver.outputs.version }}** — Windows x64 build.
 
+            ## Downloads
+
+            * **`GameBoost-${{ steps.ver.outputs.version }}-Setup.exe`** —
+              Recommended for end users. Installs to Program Files, creates
+              Start Menu + (optional) desktop shortcuts, registers an
+              uninstaller in Apps & Features. Required for Microsoft
+              Partner Center / Microsoft Store submission.
+            * **`GameBoost-${{ steps.ver.outputs.version }}-x64.exe`** —
+              Portable single-file binary. No installation, no registry
+              entries. Run directly. Useful for USB sticks and IT admins.
+
             See `CHANGELOG.md` for the full list of changes.
 
             ## Verifying the download
             ```powershell
-            (Get-FileHash -Algorithm SHA256 GameBoost-${{ steps.ver.outputs.version }}-x64.exe).Hash
+            (Get-FileHash -Algorithm SHA256 GameBoost-${{ steps.ver.outputs.version }}-Setup.exe).Hash
             ```
-            should match the value inside `GameBoost-${{ steps.ver.outputs.version }}-x64.exe.sha256`.
+            should match the value inside the matching `.sha256` file.
           files: |
+            dist/GameBoost-${{ steps.ver.outputs.version }}-Setup.exe
+            dist/GameBoost-${{ steps.ver.outputs.version }}-Setup.exe.sha256
             dist/GameBoost-${{ steps.ver.outputs.version }}-x64.exe
             dist/GameBoost-${{ steps.ver.outputs.version }}-x64.exe.sha256
           draft: false
