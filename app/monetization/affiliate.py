@@ -89,7 +89,7 @@ def default_registry() -> AffiliateRegistry:
         AffiliateLink(
             id="samsung-990-pro",
             label="Upgrade to Samsung 990 Pro NVMe",
-            url="https://www.amazon.com/dp/B0BHJJ9Y77/?tag=YOUR_TAG",
+            url="https://www.amazon.com/dp/B0BHJJ9Y77/?tag=ngsgsoftworks-20",
             partner="Amazon Associates",
             payout_hint="1-4% AOV",
             category="hardware",
@@ -97,7 +97,7 @@ def default_registry() -> AffiliateRegistry:
         AffiliateLink(
             id="crucial-ddr5-32gb",
             label="32GB DDR5 RAM kit",
-            url="https://www.amazon.com/dp/B0B7B7N5G2/?tag=YOUR_TAG",
+            url="https://www.amazon.com/dp/B0B7B7N5G2/?tag=ngsgsoftworks-20",
             partner="Amazon Associates",
             payout_hint="1-4% AOV",
             category="hardware",
@@ -105,7 +105,7 @@ def default_registry() -> AffiliateRegistry:
         AffiliateLink(
             id="thermal-grizzly-paste",
             label="Thermal Grizzly paste — 1.5g",
-            url="https://www.amazon.com/dp/B07GZHL7BR/?tag=YOUR_TAG",
+            url="https://www.amazon.com/dp/B07GZHL7BR/?tag=ngsgsoftworks-20",
             partner="Amazon Associates",
             payout_hint="1-4% AOV",
             category="hardware",

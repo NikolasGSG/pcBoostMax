@@ -21,7 +21,7 @@ Manifest schema (versioned)::
           "body": "5x faster game load times. From $59.",
           "cta": "Shop deals",
           "image_url": "https://NikolasGSG.github.io/pcBoostMax/ads/img/nvme.png",
-          "click_url": "https://amzn.to/3xyz?tag=YOUR_TAG",
+          "click_url": "https://amzn.to/3xyz?tag=ngsgsoftworks-20",
           "sponsor": "Amazon Associates",
           "weight": 1.0,
           "expires_at": "2026-12-31T23:59:59Z"
