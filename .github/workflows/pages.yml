@@ -14,6 +14,10 @@ on:
       - 'web/**'
       - 'PRIVACY.md'
       - '.github/workflows/pages.yml'
+  # Re-deploy whenever the release workflow publishes a new binary, so the
+  # /downloads/ mirror stays in sync with the latest GitHub Release.
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
@@ -33,6 +37,33 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+
+      # GitHub Releases serves binaries via a 302 redirect to its CDN, which
+      # Microsoft Partner Center rejects. We mirror the latest release's exe
+      # onto Pages so the install URL is a direct 200 OK with no redirect.
+      - name: Mirror latest release binaries to /downloads
+        env:
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -e
+          mkdir -p web/downloads
+          LATEST=$(curl -fsSL "https://api.github.com/repos/${GH_REPO}/releases/latest" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('tag_name',''))" || echo "")
+          if [ -z "$LATEST" ]; then
+            echo "No published release yet — skipping binary mirror."
+            exit 0
+          fi
+          VERSION=${LATEST#v}
+          EXE="GameBoost-${VERSION}-x64.exe"
+          BASE="https://github.com/${GH_REPO}/releases/download/${LATEST}"
+          echo "Mirroring ${LATEST} (${EXE}) to Pages /downloads/"
+          curl -fsSL -o "web/downloads/${EXE}" "${BASE}/${EXE}"
+          curl -fsSL -o "web/downloads/${EXE}.sha256" "${BASE}/${EXE}.sha256" || true
+          # Stable "latest" aliases for marketing CTAs that don't pin to a version.
+          cp "web/downloads/${EXE}" "web/downloads/GameBoost-latest-x64.exe"
+          [ -f "web/downloads/${EXE}.sha256" ] && \
+            cp "web/downloads/${EXE}.sha256" "web/downloads/GameBoost-latest-x64.exe.sha256" || true
+          ls -lh web/downloads/
 
       - name: Upload static site artefact
         uses: actions/upload-pages-artifact@v3
