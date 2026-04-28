@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "fetched_at": "2026-04-28T11:00:00Z",
+  "_comment": "Edit this file and push to main — GitHub Pages will redeploy and the desktop app picks up the change within 24h (cache TTL).",
+  "creatives": [
+    {
+      "id": "house-launch-2026q2-nvme",
+      "headline": "Boost game load times with the right NVMe",
+      "body": "Curated picks from $59 to $200 — vetted by the GameBoost team.",
+      "cta": "See deals",
+      "click_url": "https://NIK0gs.github.io/pcBoostMax/sponsor/?slot=nvme",
+      "image_url": "",
+      "sponsor": "GameBoost Picks",
+      "weight": 1.0,
+      "expires_at": "2026-12-31T23:59:59Z"
+    },
+    {
+      "id": "house-launch-2026q2-ram",
+      "headline": "32 GB DDR5 unlocks higher 1% lows",
+      "body": "Free yourself from page-faulting in AAA titles.",
+      "cta": "Browse RAM kits",
+      "click_url": "https://NIK0gs.github.io/pcBoostMax/sponsor/?slot=ram",
+      "image_url": "",
+      "sponsor": "GameBoost Picks",
+      "weight": 0.8,
+      "expires_at": "2026-12-31T23:59:59Z"
+    },
+    {
+      "id": "house-launch-2026q2-vpn",
+      "headline": "Lower your matchmaking ping",
+      "body": "Try a gaming-tuned VPN free for 30 days.",
+      "cta": "Try free",
+      "click_url": "https://NIK0gs.github.io/pcBoostMax/sponsor/?slot=vpn",
+      "image_url": "",
+      "sponsor": "GameBoost Picks",
+      "weight": 0.6,
+      "expires_at": "2026-12-31T23:59:59Z"
+    }
+  ]
+}

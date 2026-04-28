@@ -1,0 +1,96 @@
+name: Build & Release
+
+# Triggered when you push a tag like `v2.1.0`. Builds the Windows exe with
+# PyInstaller, attaches it to a GitHub Release, and produces a stable
+# download URL the Microsoft Store / installer mirrors can point at.
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:        # let you also build a release manually
+
+permissions:
+  contents: write           # needed to create the GitHub Release
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install build deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Compute version from tag
+        id: ver
+        shell: bash
+        run: |
+          # Drop the leading 'v' from the tag for the artifact filename
+          TAG=${GITHUB_REF##*/}
+          VERSION=${TAG#v}
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Build exe
+        run: python build_exe.py
+
+      - name: Rename artefact for clarity
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          Move-Item dist/GameBoost.exe "dist/GameBoost-$version-x64.exe"
+
+      - name: Smoke-test the binary
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          # CLI mode runs without a Qt event loop — perfect for CI.
+          ./dist/GameBoost-$version-x64.exe --cli services --help
+          if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne -1) {
+            throw "Smoke test failed: exit $LASTEXITCODE"
+          }
+
+      - name: Generate SHA256
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          $hash = (Get-FileHash -Algorithm SHA256 "dist/GameBoost-$version-x64.exe").Hash.ToLower()
+          "$hash  GameBoost-$version-x64.exe" | Out-File -FilePath "dist/GameBoost-$version-x64.exe.sha256" -Encoding ascii
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: GameBoost ${{ steps.ver.outputs.version }}
+          body: |
+            **GameBoost ${{ steps.ver.outputs.version }}** — Windows x64 build.
+
+            See `CHANGELOG.md` for the full list of changes.
+
+            ## Verifying the download
+            ```powershell
+            (Get-FileHash -Algorithm SHA256 GameBoost-${{ steps.ver.outputs.version }}-x64.exe).Hash
+            ```
+            should match the value inside `GameBoost-${{ steps.ver.outputs.version }}-x64.exe.sha256`.
+          files: |
+            dist/GameBoost-${{ steps.ver.outputs.version }}-x64.exe
+            dist/GameBoost-${{ steps.ver.outputs.version }}-x64.exe.sha256
+          draft: false
+          prerelease: false

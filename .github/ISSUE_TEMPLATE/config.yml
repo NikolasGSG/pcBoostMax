@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/NIK0gs/pcBoostMax/security/advisories/new
+    about: For security issues, please use the private advisory flow.
+  - name: Read the privacy policy
+    url: https://NIK0gs.github.io/pcBoostMax/privacy.html
+    about: How GameBoost handles data, ads, and telemetry.

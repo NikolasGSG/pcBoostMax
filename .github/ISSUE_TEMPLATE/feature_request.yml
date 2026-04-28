@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest an improvement, new optimization rule, or new tab.
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the *user pain* first — not your suggested solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: Proposed solution
+      description: How you imagine the feature working.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - "New optimization rule"
+        - "New tab / view"
+        - "New CLI command"
+        - "Performance / footprint"
+        - "UI / UX polish"
+        - "Other"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+    validations:
+      required: false

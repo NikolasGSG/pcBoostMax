@@ -1,0 +1,72 @@
+name: CI
+
+# Runs on every push to main and on every pull request. We do *not* build
+# the full exe here — that takes ~2 min and is only needed when tagging.
+# Instead we run a fast Python-level smoke test that imports the controller,
+# bootstraps it, and constructs every QWidget view in the offscreen Qt
+# platform. Catches 95% of regressions for ~30 s of CI time.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install runtime deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compile every Python file
+        run: python -m compileall -q app main.py
+
+      - name: Bootstrap controller + every view (offscreen Qt)
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          python -c "
+          from PyQt6.QtWidgets import QApplication
+          app = QApplication([])
+          from app.core.app_controller import AppController
+          from app.ui.theme.theme import Theme
+          from app.ui.main_window import MainWindow
+
+          ctrl = AppController(); ctrl.bootstrap(async_hardware=False)
+          window = MainWindow(ctrl, Theme())
+
+          # Force every lazy view to build so we catch wiring errors here,
+          # not in production.
+          for view_id in (
+              'dashboard','games','optimize','game_mode','monitor',
+              'insights','tools','stats','overlay','cleanup','safety','settings',
+          ):
+              w = window._build_view(view_id)
+              assert w is not None, f'Failed to build view: {view_id}'
+
+          print('CI smoke OK')
+          "
+
+      - name: CLI smoke
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          python main.py --cli services list
+          python main.py --cli services recommendations

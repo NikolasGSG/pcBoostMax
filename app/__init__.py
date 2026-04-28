@@ -1,0 +1,1 @@
+"""GameBoost Optimizer application package."""
