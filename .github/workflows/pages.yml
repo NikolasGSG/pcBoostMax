@@ -80,6 +80,17 @@ jobs:
             echo "::warning::Portable exe ${EXE} not found in release ${LATEST}"
           fi
 
+          # 3. MSIX package (Microsoft Store / Partner Center URL).
+          MSIX="GameBoost-${VERSION}-x64.msix"
+          if curl -fsSL -o "web/downloads/${MSIX}" "${BASE}/${MSIX}"; then
+            curl -fsSL -o "web/downloads/${MSIX}.sha256" "${BASE}/${MSIX}.sha256" || true
+            cp "web/downloads/${MSIX}" "web/downloads/GameBoost-latest-x64.msix"
+            [ -f "web/downloads/${MSIX}.sha256" ] && \
+              cp "web/downloads/${MSIX}.sha256" "web/downloads/GameBoost-latest-x64.msix.sha256" || true
+          else
+            echo "::warning::MSIX ${MSIX} not found — release built before identity vars were configured?"
+          fi
+
           ls -lh web/downloads/
 
       - name: Upload static site artefact

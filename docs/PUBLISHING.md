@@ -183,20 +183,61 @@ Push, done.
 Apps tab → **+ New product** → **App** → reserve `GameBoost` (or a
 variant if taken).
 
-### 2.3 Submit the package URL
+### 2.3 Reserve the app identity (one-time)
+
+Microsoft Store rejects EXE/MSI installers under **Policy 10.2.9** (no
+installer UI may appear on a no-args launch — UAC is the only allowed
+prompt). Even a perfectly silent Inno Setup wrapper can fail their
+sandbox validation. The reliable path is **MSIX**, where the Store
+itself performs the install. The repo's `release.yml` builds an MSIX
+automatically — but only after you wire the three identity values it
+needs.
+
+**Look them up once** in Partner Center:
+
+1. Sign in at <https://partner.microsoft.com/dashboard>.
+2. **Apps and games** → click **GameBoost** → **Product identity**
+   (left sidebar, sometimes shown as "App identity").
+3. Copy these three fields verbatim:
+
+| Field shown in Partner Center | Goes into repo variable          |
+| ----------------------------- | -------------------------------- |
+| **Package/Identity/Name**          | `MSIX_IDENTITY_NAME`             |
+| **Package/Identity/Publisher**     | `MSIX_PUBLISHER`                 |
+| **Package/Properties/PublisherDisplayName** | `MSIX_PUBLISHER_DISPLAY_NAME` |
+
+Examples (yours will differ):
+```
+MSIX_IDENTITY_NAME            12345NikolasGSG.GameBoost
+MSIX_PUBLISHER                CN=ABCD1234-12AB-34CD-56EF-1234567890AB
+MSIX_PUBLISHER_DISPLAY_NAME   NikolasGSG
+```
+
+**Wire them into the repo** (one-time):
+
+1. Repo Settings → **Secrets and variables** → **Actions** →
+   **Variables** tab → **New repository variable**.
+2. Add all three names above with the values from Partner Center.
+3. Re-tag the next release. CI will produce
+   `GameBoost-X.Y.Z-x64.msix` automatically.
+
+### 2.4 Submit the package URL
 
 In **Packages**:
 
-| Architecture | URL                                                                                   |
-| ------------ | ------------------------------------------------------------------------------------- |
-| **x64**      | `https://github.com/NikolasGSG/pcBoostMax/releases/download/v2.1.0/GameBoost-2.1.0-x64.exe` |
-| **x86**      | *leave empty*                                                                          |
-| **ARM64**    | *leave empty (or duplicate the x64 URL)*                                               |
+| Architecture | URL                                                                                                  |
+| ------------ | ---------------------------------------------------------------------------------------------------- |
+| **x64**      | `https://nikolasgsg.github.io/pcBoostMax/downloads/GameBoost-latest-x64.msix`                        |
+| **x86**      | *leave empty*                                                                                        |
+| **ARM64**    | *leave empty (or duplicate the x64 URL)*                                                             |
 
-If Partner Center asks for **silent install args**, leave empty —
-PyInstaller's `--onefile` exe doesn't need them.
+If you have not yet configured the identity variables and you need to
+ship _today_, fall back to the Inno Setup installer URL:
+`https://nikolasgsg.github.io/pcBoostMax/downloads/GameBoost-latest-Setup.exe`.
+Microsoft will probably reject it under Policy 10.2.9, but the binary
+itself is silent-by-default so there's a chance it slips through.
 
-### 2.4 Store listing
+### 2.5 Store listing
 
 - **Display name**: GameBoost
 - **Short description**: see `README.md` first paragraph.
@@ -211,7 +252,7 @@ PyInstaller's `--onefile` exe doesn't need them.
 - **Screenshots**: 4–8 PNGs at 1080p of your favourite tabs. Use the
   Insights, Optimize, Game Hub, and Stats tabs for variety.
 
-### 2.5 Submit and wait
+### 2.6 Submit and wait
 
 Certification: 24–72 h for first submissions. They mostly check that
 the URL works, the binary launches, and the privacy / support URLs

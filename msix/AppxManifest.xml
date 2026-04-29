@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ============================================================================
+  GameBoost — MSIX AppxManifest
+  ============================================================================
+  Microsoft Store Policy 10.2.9 forbids any installer UI on a Win32 EXE/MSI
+  package. MSIX bypasses that policy entirely because the Microsoft Store
+  performs the install itself.
+
+  IDENTITY VALUES — must be filled in by CI before MakeAppx packs.
+  ----------------------------------------------------------------
+  The three @@PLACEHOLDERS@@ below are substituted at build time by
+  release.yml using repo-level variables:
+
+    @@MSIX_IDENTITY_NAME@@           ->  vars.MSIX_IDENTITY_NAME
+    @@MSIX_PUBLISHER@@               ->  vars.MSIX_PUBLISHER
+    @@MSIX_PUBLISHER_DISPLAY_NAME@@  ->  vars.MSIX_PUBLISHER_DISPLAY_NAME
+    @@MSIX_VERSION@@                 ->  the build version (e.g. 2.1.3.0)
+
+  Look them up in Partner Center → Apps → GameBoost → Product identity:
+
+    Identity / Name              -> MSIX_IDENTITY_NAME
+    Identity / Publisher (CN=…)  -> MSIX_PUBLISHER
+    Properties / PublisherDisplayName -> MSIX_PUBLISHER_DISPLAY_NAME
+
+  Microsoft re-signs the MSIX at submission, so we do NOT sign locally.
+  ============================================================================
+-->
+<Package
+    xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+    xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+    xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+    xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+    IgnorableNamespaces="uap uap10 rescap">
+
+  <Identity
+      Name="@@MSIX_IDENTITY_NAME@@"
+      Publisher="@@MSIX_PUBLISHER@@"
+      Version="@@MSIX_VERSION@@"
+      ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>GameBoost</DisplayName>
+    <PublisherDisplayName>@@MSIX_PUBLISHER_DISPLAY_NAME@@</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Local-only Windows performance optimizer for gamers. Explains every change, rolls back every action, runs entirely on your machine.</Description>
+  </Properties>
+
+  <Dependencies>
+    <!-- 17763 = Windows 10 1809; matches the Inno Setup MinVersion floor. -->
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+    <Application Id="GameBoost"
+                 Executable="VFS\ProgramFilesX64\GameBoost\GameBoost.exe"
+                 EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+          DisplayName="GameBoost"
+          Description="Windows performance optimizer for gamers"
+          BackgroundColor="#0B0F19"
+          Square150x150Logo="Assets\Square150x150Logo.png"
+          Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile
+            Wide310x150Logo="Assets\Wide310x150Logo.png"
+            Square71x71Logo="Assets\Square71x71Logo.png"
+            Square310x310Logo="Assets\Square310x310Logo.png"
+            ShortName="GameBoost">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+            <uap:ShowOn Tile="square310x310Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#0B0F19" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <!--
+    Full-trust desktop app capabilities. We declare runFullTrust + the
+    common desktop power-user surface so SetProcessAffinity, service
+    queries, registry tweaks, etc. all work the same as the Win32 build.
+  -->
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+
+</Package>

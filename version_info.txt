@@ -8,8 +8,8 @@
 # after any APP_VERSION bump if you ever build without the spec.
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(2, 1, 2, 0),
-    prodvers=(2, 1, 2, 0),
+    filevers=(2, 1, 3, 0),
+    prodvers=(2, 1, 3, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -25,12 +25,12 @@ VSVersionInfo(
           [
             StringStruct(u'CompanyName', u'GameBoost'),
             StringStruct(u'FileDescription', u'GameBoost Optimizer — gaming performance tuner for Windows'),
-            StringStruct(u'FileVersion', u'2.1.2.0'),
+            StringStruct(u'FileVersion', u'2.1.3.0'),
             StringStruct(u'InternalName', u'GameBoost'),
             StringStruct(u'LegalCopyright', u'Open-source gaming optimizer. Users assume responsibility for applied changes.'),
             StringStruct(u'OriginalFilename', u'GameBoost.exe'),
             StringStruct(u'ProductName', u'GameBoost Optimizer'),
-            StringStruct(u'ProductVersion', u'2.1.2'),
+            StringStruct(u'ProductVersion', u'2.1.3'),
             StringStruct(u'Comments', u'Local-only. No network telemetry. Every change is reversible from the Safety tab.'),
           ])
       ]),

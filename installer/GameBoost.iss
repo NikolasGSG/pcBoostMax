@@ -28,12 +28,12 @@
 
 ; Version is overridden at build time via /DAppVersion=...
 #ifndef AppVersion
-  #define AppVersion "2.1.2"
+  #define AppVersion "2.1.3"
 #endif
 
 ; PyInstaller artefact path is overridden at build time via /DSourceExe=...
 #ifndef SourceExe
-  #define SourceExe "..\dist\GameBoost-2.1.2-x64.exe"
+  #define SourceExe "..\dist\GameBoost-2.1.3-x64.exe"
 #endif
 
 [Setup]

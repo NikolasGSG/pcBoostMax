@@ -125,19 +125,110 @@ jobs:
           $size = (Get-Item $setup).Length / 1MB
           Write-Host ("Installer built: {0} ({1:N1} MB)" -f $setup, $size)
 
+      - name: Build MSIX package
+        id: msix
+        shell: pwsh
+        # Microsoft Store rejects EXE/MSI installers under Policy 10.2.9
+        # (no installer UI permitted). MSIX bypasses that policy because
+        # the Store performs the install itself. Microsoft re-signs the
+        # MSIX during submission so we DON'T sign it locally.
+        #
+        # Identity values come from repo-level vars (Settings → Variables).
+        # If any are missing the step is skipped and a warning is emitted —
+        # the .exe + Setup.exe artefacts still ship.
+        env:
+          MSIX_IDENTITY_NAME: ${{ vars.MSIX_IDENTITY_NAME }}
+          MSIX_PUBLISHER: ${{ vars.MSIX_PUBLISHER }}
+          MSIX_PUBLISHER_DISPLAY_NAME: ${{ vars.MSIX_PUBLISHER_DISPLAY_NAME }}
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          if (-not $env:MSIX_IDENTITY_NAME -or -not $env:MSIX_PUBLISHER -or -not $env:MSIX_PUBLISHER_DISPLAY_NAME) {
+            Write-Host "::warning::MSIX_* repo variables not set — skipping MSIX build."
+            Write-Host "Set them under Settings → Secrets and variables → Actions → Variables."
+            "msix_built=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            exit 0
+          }
+
+          # Locate MakeAppx.exe (ships with every Windows SDK on the runner).
+          $sdkRoot = "C:\Program Files (x86)\Windows Kits\10\bin"
+          $makeAppx = Get-ChildItem -Path $sdkRoot -Recurse -Filter "MakeAppx.exe" `
+                       -ErrorAction SilentlyContinue |
+                       Where-Object { $_.FullName -match '\\x64\\MakeAppx.exe$' } |
+                       Sort-Object FullName -Descending |
+                       Select-Object -First 1
+          if (-not $makeAppx) {
+            throw "MakeAppx.exe not found under $sdkRoot — runner image changed?"
+          }
+          Write-Host "Using MakeAppx.exe: $($makeAppx.FullName)"
+
+          # 1. Generate the tile assets (idempotent; user-supplied PNGs win).
+          New-Item -ItemType Directory -Force -Path msix/Assets | Out-Null
+          python tools/build_msix_assets.py msix/Assets
+
+          # 2. Stage the package layout. The exe lives under VFS\ProgramFilesX64
+          #    so the manifest's Executable= path resolves on install.
+          $stage = "dist/msix-stage"
+          if (Test-Path $stage) { Remove-Item -Recurse -Force $stage }
+          New-Item -ItemType Directory -Force -Path "$stage/VFS/ProgramFilesX64/GameBoost" | Out-Null
+          New-Item -ItemType Directory -Force -Path "$stage/Assets" | Out-Null
+          Copy-Item "dist/GameBoost-$version-x64.exe" "$stage/VFS/ProgramFilesX64/GameBoost/GameBoost.exe"
+          Copy-Item "msix/Assets/*" "$stage/Assets/" -Recurse
+
+          # 3. Substitute identity + version placeholders in the manifest.
+          $manifest = Get-Content "msix/AppxManifest.xml" -Raw
+          $manifest = $manifest.Replace('@@MSIX_IDENTITY_NAME@@', $env:MSIX_IDENTITY_NAME)
+          $manifest = $manifest.Replace('@@MSIX_PUBLISHER@@', $env:MSIX_PUBLISHER)
+          $manifest = $manifest.Replace('@@MSIX_PUBLISHER_DISPLAY_NAME@@', $env:MSIX_PUBLISHER_DISPLAY_NAME)
+          $manifest = $manifest.Replace('@@MSIX_VERSION@@', "$version.0")
+          Set-Content "$stage/AppxManifest.xml" $manifest -Encoding UTF8
+
+          # 4. Pack.
+          $msixPath = "dist/GameBoost-$version-x64.msix"
+          & $makeAppx.FullName pack /d $stage /p $msixPath /o
+          if ($LASTEXITCODE -ne 0) {
+            throw "MakeAppx failed with exit $LASTEXITCODE"
+          }
+          $size = (Get-Item $msixPath).Length / 1MB
+          Write-Host ("MSIX built: {0} ({1:N1} MB)" -f $msixPath, $size)
+          "msix_built=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
       - name: Generate SHA256 hashes
         shell: pwsh
         run: |
           $version = "${{ steps.ver.outputs.version }}"
-          foreach ($f in @(
+          $files = @(
               "dist/GameBoost-$version-x64.exe",
               "dist/GameBoost-$version-Setup.exe"
-          )) {
+          )
+          if ("${{ steps.msix.outputs.msix_built }}" -eq "true") {
+            $files += "dist/GameBoost-$version-x64.msix"
+          }
+          foreach ($f in $files) {
             $hash = (Get-FileHash -Algorithm SHA256 $f).Hash.ToLower()
             $name = Split-Path $f -Leaf
             "$hash  $name" | Out-File -FilePath "$f.sha256" -Encoding ascii
             Write-Host "$name -> $hash"
           }
+
+      - name: Collect artefact paths
+        id: paths
+        shell: pwsh
+        run: |
+          $version = "${{ steps.ver.outputs.version }}"
+          $list = @(
+            "dist/GameBoost-$version-Setup.exe",
+            "dist/GameBoost-$version-Setup.exe.sha256",
+            "dist/GameBoost-$version-x64.exe",
+            "dist/GameBoost-$version-x64.exe.sha256"
+          )
+          if ("${{ steps.msix.outputs.msix_built }}" -eq "true") {
+            $list += "dist/GameBoost-$version-x64.msix"
+            $list += "dist/GameBoost-$version-x64.msix.sha256"
+          }
+          $joined = ($list -join "`n")
+          "files<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          $joined      | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "EOF"        | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
@@ -149,11 +240,13 @@ jobs:
 
             ## Downloads
 
+            * **`GameBoost-${{ steps.ver.outputs.version }}-x64.msix`** —
+              Microsoft Store package. Recommended for Microsoft Partner
+              Center submission. Bypasses the EXE-installer silent-mode
+              policy (10.2.9) entirely — the Store performs the install.
             * **`GameBoost-${{ steps.ver.outputs.version }}-Setup.exe`** —
-              Recommended for end users. Installs to Program Files, creates
-              Start Menu + (optional) desktop shortcuts, registers an
-              uninstaller in Apps & Features. Required for Microsoft
-              Partner Center / Microsoft Store submission.
+              Inno Setup installer for direct distribution. Per-user
+              install, Start Menu shortcut, Apps & Features registration.
             * **`GameBoost-${{ steps.ver.outputs.version }}-x64.exe`** —
               Portable single-file binary. No installation, no registry
               entries. Run directly. Useful for USB sticks and IT admins.
@@ -162,13 +255,9 @@ jobs:
 
             ## Verifying the download
             ```powershell
-            (Get-FileHash -Algorithm SHA256 GameBoost-${{ steps.ver.outputs.version }}-Setup.exe).Hash
+            (Get-FileHash -Algorithm SHA256 GameBoost-${{ steps.ver.outputs.version }}-x64.msix).Hash
             ```
             should match the value inside the matching `.sha256` file.
-          files: |
-            dist/GameBoost-${{ steps.ver.outputs.version }}-Setup.exe
-            dist/GameBoost-${{ steps.ver.outputs.version }}-Setup.exe.sha256
-            dist/GameBoost-${{ steps.ver.outputs.version }}-x64.exe
-            dist/GameBoost-${{ steps.ver.outputs.version }}-x64.exe.sha256
+          files: ${{ steps.paths.outputs.files }}
           draft: false
           prerelease: false

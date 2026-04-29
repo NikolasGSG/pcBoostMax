@@ -8,11 +8,17 @@ Layout::
 
     +---------- HudFrame ----------+
     | EYEBROW                      |
-    | 144  fps    │  AVG  142.3    |
-    |             │  1%LOW  92.0   |
-    |             │  0.1%LOW 71.0  |
+    | FRAME-RATE                   |
+    | 144   │ AVG (60s)   142.3 fps|
+    | FPS   │ 1% LOW       92.0 fps|
+    |       │ 0.1% LOW     71.0 fps|
+    |       │ FRAME TIME    7.1 ms |
     | [frame time graph]           |
     +------------------------------+
+
+The right column is a :class:`QGridLayout` so each row's height is
+clamped to the value font's natural line height, preventing the
+overlap regression seen on Windows high-DPI scaling.
 """
 from __future__ import annotations
 
@@ -22,6 +28,7 @@ from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QFontMetrics
 from PyQt6.QtWidgets import (
     QFrame,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QSizePolicy,
@@ -102,27 +109,44 @@ class FpsPanel(HudFrame):
         divider.setStyleSheet(f"background-color: {palette.border_hairline};")
         row.addWidget(divider)
 
-        # Stats column — explicit per-row HBoxes (one row = label + value).
-        # We compute a guaranteed row height from the value-font metrics so
-        # adjacent rows can never overlap, regardless of the hero column's
-        # height or the embedded mono font's reported sizeHint.
-        stats = QVBoxLayout()
-        stats.setSpacing(10)
+        # Stats grid — column 0 labels, column 1 values. Using QGridLayout
+        # instead of nested HBoxes so the row heights are dictated by the
+        # tallest cell on that row and rows can never bleed into each
+        # other regardless of font metrics or DPI scaling.
+        #
+        # Row height floor is computed from the value font so the visual
+        # rhythm stays consistent on 100%, 150% and 200% Windows scaling.
+        value_font = typography.mono_hud(16)
+        value_metrics = QFontMetrics(value_font)
+        row_min_height = value_metrics.height() + 4
+
+        stats_widget = QWidget()
+        stats_widget.setSizePolicy(QSizePolicy.Policy.Expanding,
+                                   QSizePolicy.Policy.Preferred)
+        stats = QGridLayout(stats_widget)
         stats.setContentsMargins(0, 6, 0, 6)
+        stats.setHorizontalSpacing(16)
+        stats.setVerticalSpacing(10)
+        stats.setColumnStretch(0, 0)
+        stats.setColumnStretch(1, 1)
 
-        value_metrics = QFontMetrics(typography.mono_hud(18))
-        row_height = value_metrics.height() + 6
+        self._avg       = self._stat_pair("AVG (60s)",  palette.neon_blue, typography, value_font)
+        self._low_1     = self._stat_pair("1% LOW",     palette.amber,     typography, value_font)
+        self._low_01    = self._stat_pair("0.1% LOW",   palette.coral,     typography, value_font)
+        self._frametime = self._stat_pair("FRAME TIME", palette.violet,    typography, value_font, unit="ms")
 
-        self._avg       = self._stat_pair("AVG (60s)",  palette.neon_blue, typography)
-        self._low_1     = self._stat_pair("1% LOW",     palette.amber,     typography)
-        self._low_01    = self._stat_pair("0.1% LOW",   palette.coral,     typography)
-        self._frametime = self._stat_pair("FRAME TIME", palette.violet,    typography, unit="ms")
+        for r, (label_w, value_w) in enumerate(
+            (self._avg, self._low_1, self._low_01, self._frametime)
+        ):
+            stats.addWidget(label_w, r, 0)
+            stats.addWidget(value_w, r, 1)
+            stats.setRowMinimumHeight(r, row_min_height)
 
-        for label_w, value_w in (self._avg, self._low_1, self._low_01, self._frametime):
-            stats.addLayout(self._build_stat_row(label_w, value_w, row_height))
+        # Phantom row absorbs any leftover vertical slack so the four
+        # data rows stay packed at the top instead of stretching apart.
+        stats.setRowStretch(4, 1)
 
-        stats.addStretch(1)
-        row.addLayout(stats, 1)
+        row.addWidget(stats_widget, 1)
 
         body.addLayout(row)
 
@@ -153,30 +177,27 @@ class FpsPanel(HudFrame):
 
     # ------------------------------------------------------------------ helpers
     def _stat_pair(self, label: str, color: str,
-                   typography: Typography, *, unit: str = "fps"):
+                   typography: Typography, value_font, *, unit: str = "fps"):
         l = QLabel(label)
         l.setFont(typography.eyebrow())
         l.setStyleSheet(f"color: {self._pal.text_tertiary};")
-        l.setMinimumWidth(86)
+        l.setMinimumWidth(96)
         l.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
-        v = QLabel(f"— {unit}")
-        v.setFont(typography.mono_hud(18))
+        l.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+
+        v = QLabel(f"—  {unit}")
+        v.setFont(value_font)
         v.setStyleSheet(f"color: {color};")
         v.setProperty("_unit", unit)
         v.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         v.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        v.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
+        # Hard-cap the value's row height to the value font's natural line
+        # height so a tall mono glyph (e.g. on high-DPI Windows) cannot
+        # overflow into adjacent grid rows.
+        v.setMaximumHeight(QFontMetrics(value_font).height() + 4)
+        l.setMaximumHeight(QFontMetrics(value_font).height() + 4)
         return l, v
-
-    def _build_stat_row(self, label_w: QLabel, value_w: QLabel, row_height: int) -> QHBoxLayout:
-        """Pair a label + value in a single horizontal row with a guaranteed height."""
-        h = QHBoxLayout()
-        h.setContentsMargins(0, 0, 0, 0)
-        h.setSpacing(14)
-        label_w.setMinimumHeight(row_height)
-        value_w.setMinimumHeight(row_height)
-        h.addWidget(label_w)
-        h.addWidget(value_w, stretch=1)
-        return h
 
     def _set_stat(self, pair, value: float) -> None:
         unit = pair[1].property("_unit") or "fps"
