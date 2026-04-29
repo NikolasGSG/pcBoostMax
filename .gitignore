@@ -51,6 +51,10 @@ ads_manifest.json
 ehthumbs.db
 desktop.ini
 
+# ---- Marketing artefacts produced by tools/capture_store_shots.py ----
+# Regenerate locally with `python tools/capture_store_shots.py`.
+store_screenshots/
+
 # ---- Secrets ----
 .env
 .env.*
