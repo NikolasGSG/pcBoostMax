@@ -55,6 +55,11 @@ desktop.ini
 # Regenerate locally with `python tools/capture_store_shots.py`.
 store_screenshots/
 
+# ---- MSIX tile assets are regenerated from tools/build_msix_assets.py ----
+# Keeping them out of the repo means we never commit binary art and the
+# tile design is always reproducible from source.
+msix/Assets/*.png
+
 # ---- Secrets ----
 .env
 .env.*
