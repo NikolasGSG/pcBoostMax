@@ -78,7 +78,9 @@ TILES: list[tuple[str, int, int]] = [
 MARKETING_TILES: list[tuple[str, int, int]] = [
     ("StoreLogo_720x1080.png", 720, 1080),     # 9:16  — featured carousel
     ("StoreLogo_1080x1080.png", 1080, 1080),   # 1:1   — spotlight tile
-    ("StoreLogo_2400x1200.png", 2400, 1200),   # 23:10 — wide hero
+    ("StoreLogo_2400x1200.png", 2400, 1200),   # 23:10 — wide hero (logo only)
+    ("HeroImage_1920x1080.png", 1920, 1080),   # 16:9  — 'Super hero art'
+                                                #         editorial layout
 ]
 
 
@@ -306,8 +308,114 @@ def _render_portrait(width: int, height: int) -> Image.Image:
     return img
 
 
+def _render_hero(width: int, height: int) -> Image.Image:
+    """Microsoft Store 'Super hero art' (1920x1080) editorial layout.
+
+    Differs from the simple horizontal lockup by adding:
+
+      * a faint hex-grid pattern across the entire canvas,
+      * a soft cyan radial glow centred on where the mark sits,
+      * an oversized hex+bolt on the left,
+      * a big bold headline + cyan rule + tagline on the right.
+
+    This is what Microsoft surfaces on the Store homepage's
+    Featured Apps carousel and in themed category panels.
+    """
+    img = Image.new("RGBA", (width, height), BACKGROUND)
+
+    # ---- Layer 1: faint hex-grid pattern --------------------------------
+    # Drawn into a separate RGBA layer at very low alpha so the obsidian
+    # background still dominates and the eye doesn't catch the pattern
+    # consciously — it just adds texture.
+    pattern = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    pdraw = ImageDraw.Draw(pattern)
+    spacing = max(48, width // 28)
+    radius = spacing * 0.46
+    grid_color = (88, 211, 255, 16)   # cyan @ ~6 % alpha
+    rows = int(height / (spacing * 0.866)) + 2
+    cols = int(width / spacing) + 2
+    for row in range(-1, rows):
+        for col in range(-1, cols):
+            cx = col * spacing + (spacing / 2 if row % 2 else 0)
+            cy = row * spacing * 0.866
+            pdraw.polygon(_hex_polygon(cx, cy, radius), outline=grid_color, fill=None)
+    img.alpha_composite(pattern)
+
+    # ---- Layer 2: soft cyan radial glow centred on the mark ------------
+    for r_factor, alpha in ((0.65, 32), (0.45, 24), (0.28, 18)):
+        rx = int(width * r_factor * 0.55)
+        ry = int(height * r_factor)
+        gx = int(width * 0.28)
+        gy = height // 2
+        glow = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        gdraw = ImageDraw.Draw(glow)
+        gdraw.ellipse([(gx - rx, gy - ry), (gx + rx, gy + ry)], fill=(88, 211, 255, alpha))
+        img.alpha_composite(glow)
+
+    draw = ImageDraw.Draw(img)
+
+    # ---- Layer 3: oversized hex+bolt on the left -----------------------
+    glyph_size = int(min(height * 0.62, width * 0.30))
+    mark_cx = width * 0.26
+    mark_cy = height / 2
+    _draw_hex_bolt(draw, mark_cx, mark_cy, glyph_size)
+
+    # ---- Layer 4: editorial typography on the right --------------------
+    text_x = mark_cx + glyph_size / 2 + width * 0.04
+
+    title_size = max(48, int(round(height * 0.135)))
+    title_font = _load_font(title_size, weight="bold")
+    title = "GAMEBOOSTAPEX"
+    tbbox = draw.textbbox((0, 0), title, font=title_font)
+    title_w = tbbox[2] - tbbox[0]
+    title_h = tbbox[3] - tbbox[1]
+    # Anchor the headline above the vertical centre so the rule + subhead
+    # sit comfortably below it.
+    title_y = int(mark_cy - title_h - height * 0.04)
+    draw.text((text_x - tbbox[0], title_y - tbbox[1]), title, font=title_font, fill=TEXT_PRIMARY)
+
+    # Cyan accent rule under the headline. Width matches roughly a third
+    # of the headline so it reads as an editorial under-bar, not a list
+    # divider.
+    rule_y = int(title_y + title_h + max(10, height * 0.014))
+    rule_w = int(min(title_w * 0.36, width * 0.18))
+    draw.line(
+        [(text_x, rule_y), (text_x + rule_w, rule_y)],
+        fill=ACCENT_CYAN,
+        width=max(2, int(height * 0.005)),
+    )
+
+    # Tagline / subhead in cyan.
+    sub_size = max(20, int(round(height * 0.045)))
+    sub_font = _load_font(sub_size, weight="bold")
+    sub = "TUNE WINDOWS FOR THE GAME IN FRONT OF YOU"
+    sbbox = draw.textbbox((0, 0), sub, font=sub_font)
+    sub_y = int(rule_y + max(20, height * 0.025))
+    draw.text((text_x - sbbox[0], sub_y - sbbox[1]), sub, font=sub_font, fill=ACCENT_CYAN)
+
+    # Tertiary feature ticker centred along the bottom edge in muted
+    # cyan. Anchors the composition and gives the reviewer something
+    # specific to read.
+    ticker_size = max(14, int(round(height * 0.024)))
+    ticker_font = _load_font(ticker_size, weight="bold")
+    ticker = "POWER  ·  CPU  ·  GPU  ·  NETWORK  ·  TELEMETRY  ·  SAFETY"
+    kbbox = draw.textbbox((0, 0), ticker, font=ticker_font)
+    ktw = kbbox[2] - kbbox[0]
+    ticker_y = int(height - height * 0.07 - kbbox[3])
+    draw.text(
+        ((width - ktw) // 2 - kbbox[0], ticker_y - kbbox[1]),
+        ticker,
+        font=ticker_font,
+        fill=(60, 145, 175, 255),     # muted cyan so it doesn't compete
+    )
+
+    return img
+
+
 def _render_marketing(name: str, width: int, height: int) -> Image.Image:
     """Dispatch to the right layout for marketing-only tiles."""
+    if name.startswith("HeroImage"):
+        return _render_hero(width, height)
     aspect = width / height
     # Tall poster (9:16) and square (1:1) both look right with the
     # vertical lockup — text reads top-to-bottom in either case.
