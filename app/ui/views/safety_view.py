@@ -149,7 +149,7 @@ class SafetyView(QWidget):
             self.tree.addTopLevelItem(self._record_to_item(rec))
 
     def _create_restore_point(self) -> None:
-        res = self._ctrl.restore_points.create("GameBoost: manual")
+        res = self._ctrl.restore_points.create("GameBoostApex: manual")
         if res.created:
             QMessageBox.information(self, "Restore point", "Restore point created successfully.")
         else:
@@ -157,7 +157,7 @@ class SafetyView(QWidget):
         self.refresh()
 
     def _export(self) -> None:
-        default = str(Path.home() / "Downloads" / "gameboost-actions.json")
+        default = str(Path.home() / "Downloads" / "gameboostapex-actions.json")
         path, _ = QFileDialog.getSaveFileName(self, "Export action history", default, "JSON files (*.json)")
         if not path:
             return

@@ -3,7 +3,7 @@ Twitter / Reddit / Discord. Watermarked to drive new installs.
 
 Uses ``QPainter`` exclusively so we don't pull a heavy image library.
 The output is intentionally simple: dark background, hex pattern,
-one-line headline, two stat blocks, and the GameBoost wordmark.
+one-line headline, two stat blocks, and the GameBoostApex wordmark.
 
 Public entry points:
     * :func:`render_fps_card` — "+28 FPS in CS2"
@@ -66,7 +66,7 @@ def _paint_header(p: QPainter, palette: Palette) -> None:
     f = QFont("Segoe UI", 18, QFont.Weight.DemiBold)
     p.setFont(f)
     p.setPen(QColor(palette.text_secondary))
-    p.drawText(MARGIN + 22, MARGIN + 28, "GAMEBOOST · APEX")
+    p.drawText(MARGIN + 22, MARGIN + 28, "GAMEBOOSTAPEX · APEX")
 
 
 def _paint_footer(p: QPainter, palette: Palette) -> None:
@@ -125,7 +125,7 @@ def render_fps_card(
         sign = "+" if (fps_before is not None and delta >= 0) else ""
         headline = f"{sign}{delta:.0f} FPS in {game}" if fps_before is not None else f"{fps_after:.0f} FPS in {game}"
         _paint_headline(p, pal, headline)
-        _paint_stat_block(p, pal, MARGIN, 410, f"{fps_after:.0f}", "AFTER GAMEBOOST")
+        _paint_stat_block(p, pal, MARGIN, 410, f"{fps_after:.0f}", "AFTER GAMEBOOSTAPEX")
         if fps_before is not None:
             _paint_stat_block(p, pal, MARGIN + 320, 410, f"{fps_before:.0f}", "BEFORE")
         _paint_footer(p, pal)

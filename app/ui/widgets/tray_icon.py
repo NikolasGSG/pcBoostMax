@@ -1,4 +1,4 @@
-"""System tray icon for GameBoost.
+"""System tray icon for GameBoostApex.
 
 Keeps the app alive when the user clicks the window's [X]. The tray menu
 gives quick access to:
@@ -55,7 +55,7 @@ def tray_icon(palette: Palette) -> QIcon:
     return icon
 
 
-class GameBoostTray(QSystemTrayIcon):
+class GameBoostApexTray(QSystemTrayIcon):
     """System tray icon + context menu."""
 
     def __init__(
@@ -89,7 +89,7 @@ class GameBoostTray(QSystemTrayIcon):
             f" margin: 4px 8px; }}"
         )
 
-        show_act = QAction("Open GameBoost", menu)
+        show_act = QAction("Open GameBoostApex", menu)
         show_act.triggered.connect(on_show)
         menu.addAction(show_act)
 
@@ -124,7 +124,7 @@ class GameBoostTray(QSystemTrayIcon):
 
         menu.addSeparator()
 
-        quit_act = QAction("Quit GameBoost", menu)
+        quit_act = QAction("Quit GameBoostApex", menu)
         quit_act.triggered.connect(on_quit)
         menu.addAction(quit_act)
 

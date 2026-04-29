@@ -32,7 +32,7 @@ class RestorePointService:
     def is_supported(self) -> bool:
         return sys.platform == "win32"
 
-    def create(self, description: str = "GameBoost Optimizer") -> RestorePointResult:
+    def create(self, description: str = "GameBoostApex Optimizer") -> RestorePointResult:
         if not self.is_supported():
             return RestorePointResult(False, "System Restore is a Windows-only feature.")
         if not is_admin():

@@ -1,4 +1,4 @@
-# GameBoost APEX
+# GameBoostApex
 
 [![Release](https://img.shields.io/github/v/release/NikolasGSG/pcBoostMax?style=flat-square&color=A6FF00&label=download)](https://github.com/NikolasGSG/pcBoostMax/releases/latest)
 [![CI](https://img.shields.io/github/actions/workflow/status/NikolasGSG/pcBoostMax/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/NikolasGSG/pcBoostMax/actions/workflows/ci.yml)
@@ -11,7 +11,7 @@
 
 ▶ **[Download for Windows ↓](https://github.com/NikolasGSG/pcBoostMax/releases/latest)** &nbsp;·&nbsp; [Project site](https://NikolasGSG.github.io/pcBoostMax/) &nbsp;·&nbsp; [Privacy](PRIVACY.md) &nbsp;·&nbsp; [Changelog](CHANGELOG.md)
 
-GameBoost APEX is the v2.x rewrite of GameBoost Optimizer. It now bundles:
+GameBoostApex is the v2.x rewrite of GameBoostApex Optimizer. It now bundles:
 
 - a curated, fully reversible **Optimization Engine** (17+ rules with `what` / `why` / risk metadata),
 - a hands-free **AutoPilot** that silently applies the safe Recommended preset, swaps to per-game profiles when a game starts, and resolves critical insights for you,
@@ -27,8 +27,8 @@ GameBoost APEX is the v2.x rewrite of GameBoost Optimizer. It now bundles:
 
 ## What's new in 2.0 — "APEX"
 
-- **AutoPilot** — silent, hands-free automation. Once enabled, GameBoost applies the safe rules of the Recommended preset on boot (max once per day), activates per-game profiles when a game launches, and resolves curated critical insights without prompts. Everything stays reversible from the Safety tab.
-- **Per-game profiles** — swap power plan, set process priority and CPU affinity, suspend a list of background apps for the duration of the session, and restore baseline on exit. Stored as JSON under `%LOCALAPPDATA%/GameBoostOptimizer/game_profiles/`.
+- **AutoPilot** — silent, hands-free automation. Once enabled, GameBoostApex applies the safe rules of the Recommended preset on boot (max once per day), activates per-game profiles when a game launches, and resolves curated critical insights without prompts. Everything stays reversible from the Safety tab.
+- **Per-game profiles** — swap power plan, set process priority and CPU affinity, suspend a list of background apps for the duration of the session, and restore baseline on exit. Stored as JSON under `%LOCALAPPDATA%/GameBoostApexOptimizer/game_profiles/`.
 - **Game Hub view** — fast, cached library grid with launcher chips, search, filter by launcher, sort by recently played, and "Play" / "Tune" actions on every tile.
 - **Real FPS panel** in Monitor — large mono FPS readout with average, 1% low, 0.1% low, frame time, and a frame-time graph.
 - **Live HUD ticker** — a permanent strip across the top of the window showing CPU / RAM / GPU / Disk / Network with per-metric pressure colouring.
@@ -163,7 +163,7 @@ python -m pip install -r requirements.txt
 python build_exe.py
 ```
 
-This produces `dist/GameBoost.exe` — a single self-contained executable,
+This produces `dist/GameBoostApex.exe` — a single self-contained executable,
 no Python runtime or dependencies required on the target machine.
 
 Under the hood:

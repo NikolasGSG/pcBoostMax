@@ -55,13 +55,13 @@ jobs:
         shell: pwsh
         run: |
           $version = "${{ steps.ver.outputs.version }}"
-          Move-Item dist/GameBoost.exe "dist/GameBoost-$version-x64.exe"
+          Move-Item dist/GameBoostApex.exe "dist/GameBoostApex-$version-x64.exe"
 
       - name: Smoke-test the binary
         shell: pwsh
         run: |
           $version = "${{ steps.ver.outputs.version }}"
-          $exe = (Resolve-Path "./dist/GameBoost-$version-x64.exe").Path
+          $exe = (Resolve-Path "./dist/GameBoostApex-$version-x64.exe").Path
           if (-not (Test-Path $exe)) {
             Get-ChildItem dist
             throw "Built artefact not found at $exe"
@@ -112,12 +112,12 @@ jobs:
           Write-Host "================ inno setup ================"
           & $iscc `
             "/DAppVersion=$version" `
-            "/DSourceExe=..\dist\GameBoost-$version-x64.exe" `
-            installer/GameBoost.iss
+            "/DSourceExe=..\dist\GameBoostApex-$version-x64.exe" `
+            installer/GameBoostApex.iss
           if ($LASTEXITCODE -ne 0) {
             throw "Inno Setup compilation failed with exit $LASTEXITCODE"
           }
-          $setup = "dist/GameBoost-$version-Setup.exe"
+          $setup = "dist/GameBoostApex-$version-Setup.exe"
           if (-not (Test-Path $setup)) {
             Get-ChildItem dist
             throw "Setup installer missing at $setup"
@@ -169,9 +169,9 @@ jobs:
           #    so the manifest's Executable= path resolves on install.
           $stage = "dist/msix-stage"
           if (Test-Path $stage) { Remove-Item -Recurse -Force $stage }
-          New-Item -ItemType Directory -Force -Path "$stage/VFS/ProgramFilesX64/GameBoost" | Out-Null
+          New-Item -ItemType Directory -Force -Path "$stage/VFS/ProgramFilesX64/GameBoostApex" | Out-Null
           New-Item -ItemType Directory -Force -Path "$stage/Assets" | Out-Null
-          Copy-Item "dist/GameBoost-$version-x64.exe" "$stage/VFS/ProgramFilesX64/GameBoost/GameBoost.exe"
+          Copy-Item "dist/GameBoostApex-$version-x64.exe" "$stage/VFS/ProgramFilesX64/GameBoostApex/GameBoostApex.exe"
           Copy-Item "msix/Assets/*" "$stage/Assets/" -Recurse
 
           # 3. Substitute identity + version placeholders in the manifest.
@@ -183,7 +183,7 @@ jobs:
           Set-Content "$stage/AppxManifest.xml" $manifest -Encoding UTF8
 
           # 4. Pack.
-          $msixPath = "dist/GameBoost-$version-x64.msix"
+          $msixPath = "dist/GameBoostApex-$version-x64.msix"
           & $makeAppx.FullName pack /d $stage /p $msixPath /o
           if ($LASTEXITCODE -ne 0) {
             throw "MakeAppx failed with exit $LASTEXITCODE"
@@ -197,11 +197,11 @@ jobs:
         run: |
           $version = "${{ steps.ver.outputs.version }}"
           $files = @(
-              "dist/GameBoost-$version-x64.exe",
-              "dist/GameBoost-$version-Setup.exe"
+              "dist/GameBoostApex-$version-x64.exe",
+              "dist/GameBoostApex-$version-Setup.exe"
           )
           if ("${{ steps.msix.outputs.msix_built }}" -eq "true") {
-            $files += "dist/GameBoost-$version-x64.msix"
+            $files += "dist/GameBoostApex-$version-x64.msix"
           }
           foreach ($f in $files) {
             $hash = (Get-FileHash -Algorithm SHA256 $f).Hash.ToLower()
@@ -216,14 +216,14 @@ jobs:
         run: |
           $version = "${{ steps.ver.outputs.version }}"
           $list = @(
-            "dist/GameBoost-$version-Setup.exe",
-            "dist/GameBoost-$version-Setup.exe.sha256",
-            "dist/GameBoost-$version-x64.exe",
-            "dist/GameBoost-$version-x64.exe.sha256"
+            "dist/GameBoostApex-$version-Setup.exe",
+            "dist/GameBoostApex-$version-Setup.exe.sha256",
+            "dist/GameBoostApex-$version-x64.exe",
+            "dist/GameBoostApex-$version-x64.exe.sha256"
           )
           if ("${{ steps.msix.outputs.msix_built }}" -eq "true") {
-            $list += "dist/GameBoost-$version-x64.msix"
-            $list += "dist/GameBoost-$version-x64.msix.sha256"
+            $list += "dist/GameBoostApex-$version-x64.msix"
+            $list += "dist/GameBoostApex-$version-x64.msix.sha256"
           }
           $joined = ($list -join "`n")
           "files<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
@@ -234,20 +234,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.ver.outputs.tag }}
-          name: GameBoost ${{ steps.ver.outputs.version }}
+          name: GameBoostApex ${{ steps.ver.outputs.version }}
           body: |
-            **GameBoost ${{ steps.ver.outputs.version }}** — Windows x64 build.
+            **GameBoostApex ${{ steps.ver.outputs.version }}** — Windows x64 build.
 
             ## Downloads
 
-            * **`GameBoost-${{ steps.ver.outputs.version }}-x64.msix`** —
+            * **`GameBoostApex-${{ steps.ver.outputs.version }}-x64.msix`** —
               Microsoft Store package. Recommended for Microsoft Partner
               Center submission. Bypasses the EXE-installer silent-mode
               policy (10.2.9) entirely — the Store performs the install.
-            * **`GameBoost-${{ steps.ver.outputs.version }}-Setup.exe`** —
+            * **`GameBoostApex-${{ steps.ver.outputs.version }}-Setup.exe`** —
               Inno Setup installer for direct distribution. Per-user
               install, Start Menu shortcut, Apps & Features registration.
-            * **`GameBoost-${{ steps.ver.outputs.version }}-x64.exe`** —
+            * **`GameBoostApex-${{ steps.ver.outputs.version }}-x64.exe`** —
               Portable single-file binary. No installation, no registry
               entries. Run directly. Useful for USB sticks and IT admins.
 
@@ -255,7 +255,7 @@ jobs:
 
             ## Verifying the download
             ```powershell
-            (Get-FileHash -Algorithm SHA256 GameBoost-${{ steps.ver.outputs.version }}-x64.msix).Hash
+            (Get-FileHash -Algorithm SHA256 GameBoostApex-${{ steps.ver.outputs.version }}-x64.msix).Hash
             ```
             should match the value inside the matching `.sha256` file.
           files: ${{ steps.paths.outputs.files }}

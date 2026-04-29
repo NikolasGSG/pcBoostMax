@@ -12,7 +12,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: GameBoost version
+      label: GameBoostApex version
       description: Visible in `Settings → About`.
       placeholder: "2.1.0"
     validations:
@@ -68,7 +68,7 @@ body:
     attributes:
       label: Log file
       description: |
-        Attach `%LOCALAPPDATA%\GameBoostOptimizer\logs\gameboost.log` if you
+        Attach `%LOCALAPPDATA%\GameBoostApexOptimizer\logs\gameboostapex.log` if you
         can — please redact anything personal first. The file is plain JSON
         Lines.
       render: shell

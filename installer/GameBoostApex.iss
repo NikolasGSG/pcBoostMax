@@ -1,5 +1,5 @@
 ; ====================================================================
-; Inno Setup script for GameBoost
+; Inno Setup script for GameBoostApex
 ;
 ; Wraps the PyInstaller --onefile output in a recognized Windows
 ; installer. Microsoft Partner Center, Chocolatey, and Scoop accept
@@ -21,19 +21,19 @@
 ; detection works across versions. Never regenerate.
 ; ====================================================================
 
-#define MyAppName "GameBoost"
-#define MyAppPublisher "GameBoost"
+#define MyAppName "GameBoostApex"
+#define MyAppPublisher "GameBoostApex"
 #define MyAppURL "https://nikolasgsg.github.io/pcBoostMax/"
-#define MyAppExeName "GameBoost.exe"
+#define MyAppExeName "GameBoostApex.exe"
 
 ; Version is overridden at build time via /DAppVersion=...
 #ifndef AppVersion
-  #define AppVersion "2.1.3"
+  #define AppVersion "2.1.4"
 #endif
 
 ; PyInstaller artefact path is overridden at build time via /DSourceExe=...
 #ifndef SourceExe
-  #define SourceExe "..\dist\GameBoost-2.1.3-x64.exe"
+  #define SourceExe "..\dist\GameBoostApex-2.1.4-x64.exe"
 #endif
 
 [Setup]
@@ -46,16 +46,16 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL=https://github.com/NikolasGSG/pcBoostMax/issues
 AppUpdatesURL=https://github.com/NikolasGSG/pcBoostMax/releases
-AppCopyright=Copyright (c) 2026 GameBoost. Open-source under the MIT license.
+AppCopyright=Copyright (c) 2026 GameBoostApex. Open-source under the MIT license.
 VersionInfoVersion={#AppVersion}.0
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription={#MyAppName} Optimizer setup
-VersionInfoCopyright=Copyright (c) 2026 GameBoost
+VersionInfoCopyright=Copyright (c) 2026 GameBoostApex
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=..\dist
-OutputBaseFilename=GameBoost-{#AppVersion}-Setup
+OutputBaseFilename=GameBoostApex-{#AppVersion}-Setup
 Compression=lzma2/max
 SolidCompression=yes
 PrivilegesRequired=lowest

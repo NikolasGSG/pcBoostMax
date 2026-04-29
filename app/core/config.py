@@ -1,6 +1,6 @@
 """Persistent user configuration.
 
-Stored as JSON in ``%LOCALAPPDATA%/GameBoostOptimizer/config.json``.
+Stored as JSON in ``%LOCALAPPDATA%/GameBoostApexOptimizer/config.json``.
 We keep the schema intentionally tiny — the heavy profile data lives in
 ``profiles/``.
 """

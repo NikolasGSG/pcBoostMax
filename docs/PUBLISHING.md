@@ -1,4 +1,4 @@
-# GameBoost — Full Publishing Runbook
+# GameBoostApex — Full Publishing Runbook
 
 End-to-end checklist to take this repo from local to **shipped**:
 GitHub repo, free GitHub Pages domain, automated release pipeline,
@@ -90,7 +90,7 @@ git push origin v2.1.0
 Watch the build in the **Actions** tab. ~3 min later you'll have:
 
 ```
-https://github.com/NikolasGSG/pcBoostMax/releases/download/v2.1.0/GameBoost-2.1.0-x64.exe
+https://github.com/NikolasGSG/pcBoostMax/releases/download/v2.1.0/GameBoostApex-2.1.0-x64.exe
 ```
 
 That URL is what you paste into Microsoft Partner Center for the
@@ -180,7 +180,7 @@ Push, done.
 
 ### 2.2 Reserve the app name
 
-Apps tab → **+ New product** → **App** → reserve `GameBoost` (or a
+Apps tab → **+ New product** → **App** → reserve `GameBoostApex` (or a
 variant if taken).
 
 ### 2.3 Reserve the app identity (one-time)
@@ -196,7 +196,7 @@ needs.
 **Look them up once** in Partner Center:
 
 1. Sign in at <https://partner.microsoft.com/dashboard>.
-2. **Apps and games** → click **GameBoost** → **Product identity**
+2. **Apps and games** → click **GameBoostApex** → **Product identity**
    (left sidebar, sometimes shown as "App identity").
 3. Copy these three fields verbatim:
 
@@ -208,7 +208,7 @@ needs.
 
 Examples (yours will differ):
 ```
-MSIX_IDENTITY_NAME            12345NikolasGSG.GameBoost
+MSIX_IDENTITY_NAME            12345NikolasGSG.GameBoostApex
 MSIX_PUBLISHER                CN=ABCD1234-12AB-34CD-56EF-1234567890AB
 MSIX_PUBLISHER_DISPLAY_NAME   NikolasGSG
 ```
@@ -219,7 +219,7 @@ MSIX_PUBLISHER_DISPLAY_NAME   NikolasGSG
    **Variables** tab → **New repository variable**.
 2. Add all three names above with the values from Partner Center.
 3. Re-tag the next release. CI will produce
-   `GameBoost-X.Y.Z-x64.msix` automatically.
+   `GameBoostApex-X.Y.Z-x64.msix` automatically.
 
 ### 2.4 Submit the package URL
 
@@ -227,19 +227,19 @@ In **Packages**:
 
 | Architecture | URL                                                                                                  |
 | ------------ | ---------------------------------------------------------------------------------------------------- |
-| **x64**      | `https://nikolasgsg.github.io/pcBoostMax/downloads/GameBoost-latest-x64.msix`                        |
+| **x64**      | `https://nikolasgsg.github.io/pcBoostMax/downloads/GameBoostApex-latest-x64.msix`                        |
 | **x86**      | *leave empty*                                                                                        |
 | **ARM64**    | *leave empty (or duplicate the x64 URL)*                                                             |
 
 If you have not yet configured the identity variables and you need to
 ship _today_, fall back to the Inno Setup installer URL:
-`https://nikolasgsg.github.io/pcBoostMax/downloads/GameBoost-latest-Setup.exe`.
+`https://nikolasgsg.github.io/pcBoostMax/downloads/GameBoostApex-latest-Setup.exe`.
 Microsoft will probably reject it under Policy 10.2.9, but the binary
 itself is silent-by-default so there's a chance it slips through.
 
 ### 2.5 Store listing
 
-- **Display name**: GameBoost
+- **Display name**: GameBoostApex
 - **Short description**: see `README.md` first paragraph.
 - **Description**: paste from `README.md`.
 - **Category**: Utilities & tools.
@@ -278,7 +278,7 @@ are live.
 2. `git commit -am "ads: q3 rotation"` && `git push`.
 3. Pages redeploys; desktop app picks up the new manifest within 24 h
    (or immediately on next launch if `ads_manifest.json` cache is
-   removed from `%LOCALAPPDATA%\GameBoostOptimizer\`).
+   removed from `%LOCALAPPDATA%\GameBoostApexOptimizer\`).
 
 ### Update the privacy policy
 1. Edit `PRIVACY.md`.
@@ -293,7 +293,7 @@ are live.
   Eliminates SmartScreen warnings; speeds up Store certification.
   Configure in `build_exe.py` with `--codesign-identity` once you have
   the cert in `.pfx` format.
-- **Custom domain** — buy `gameboost.app` (or similar), add it as a
+- **Custom domain** — buy `gameboostapex.app` (or similar), add it as a
   CNAME in `web/CNAME`, configure DNS at the registrar:
   ```
   Type   Host   Target
@@ -321,7 +321,7 @@ are live.
 | Privacy policy (public)          | `https://NikolasGSG.github.io/pcBoostMax/privacy.html`                        |
 | Sponsor page (where ads run)     | `https://NikolasGSG.github.io/pcBoostMax/sponsor/`                            |
 | Banner manifest (consumed by app)| `https://NikolasGSG.github.io/pcBoostMax/ads/manifest.json`                   |
-| Latest x64 download              | `https://github.com/NikolasGSG/pcBoostMax/releases/latest/download/GameBoost-2.1.0-x64.exe` |
+| Latest x64 download              | `https://github.com/NikolasGSG/pcBoostMax/releases/latest/download/GameBoostApex-2.1.0-x64.exe` |
 | Issue tracker                    | `https://github.com/NikolasGSG/pcBoostMax/issues`                             |
 | Source                           | `https://github.com/NikolasGSG/pcBoostMax`                                    |
 

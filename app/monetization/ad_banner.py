@@ -226,7 +226,7 @@ class AdBanner(QFrame):
         request = QNetworkRequest(QUrl(url))
         request.setRawHeader(
             b"User-Agent",
-            b"GameBoost/2.1 (+https://gameboost.app)",
+            b"GameBoostApex/2.1 (+https://gameboostapex.app)",
         )
         reply = self._network.get(request)
         reply.finished.connect(lambda r=reply: self._on_image_loaded(r))

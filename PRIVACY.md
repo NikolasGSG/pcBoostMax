@@ -1,14 +1,14 @@
-# GameBoost — Privacy Policy
+# GameBoostApex — Privacy Policy
 
 **Effective date:** 2026-04-28
-**Maintainer:** GameBoost project
+**Maintainer:** GameBoostApex project
 **Contact:** GitHub Issues on the project's repository
 
 ---
 
 ## 1. Plain-English summary
 
-GameBoost is a Windows desktop optimizer that runs **entirely on your computer**. We do not have a server, we do not maintain accounts, and we do not upload your hardware information, files, settings, or usage history to anyone we control.
+GameBoostApex is a Windows desktop optimizer that runs **entirely on your computer**. We do not have a server, we do not maintain accounts, and we do not upload your hardware information, files, settings, or usage history to anyone we control.
 
 The only network calls the app makes are:
 
@@ -17,13 +17,13 @@ The only network calls the app makes are:
 - **Banner thumbnail images** — pulled directly from the URL listed in the manifest entry (typically a CDN we control).
 - **Software-update checks (if enabled in Settings)** — a single HEAD request to GitHub to compare version numbers.
 
-GameBoost is ads-supported. You can switch personalized advertising **off** at any time in `Settings → Privacy`, and we serve non-personalized ads in regions where that is legally required (GDPR, UK GDPR, CCPA, LGPD).
+GameBoostApex is ads-supported. You can switch personalized advertising **off** at any time in `Settings → Privacy`, and we serve non-personalized ads in regions where that is legally required (GDPR, UK GDPR, CCPA, LGPD).
 
 ---
 
 ## 2. What we read from your PC at runtime
 
-To do its job, GameBoost reads (but does **not** transmit) standard Windows system information:
+To do its job, GameBoostApex reads (but does **not** transmit) standard Windows system information:
 
 | Category          | Examples                                                  | Source                                       |
 | ----------------- | --------------------------------------------------------- | -------------------------------------------- |
@@ -42,7 +42,7 @@ This is the same data you can see in Task Manager, Device Manager, or PowerShell
 
 ## 3. What we store locally
 
-GameBoost writes the following files inside `%LOCALAPPDATA%\GameBoostOptimizer\`:
+GameBoostApex writes the following files inside `%LOCALAPPDATA%\GameBoostApexOptimizer\`:
 
 ```
 config.json          In-app preferences (theme, hotkeys, mode, privacy choices)
@@ -72,7 +72,7 @@ These files **never leave your PC** unless you manually copy them.
 
 ## 5. Network connections
 
-GameBoost makes outbound network calls only in these specific situations:
+GameBoostApex makes outbound network calls only in these specific situations:
 
 ### 5.1 You explicitly trigger them
 
@@ -81,7 +81,7 @@ GameBoost makes outbound network calls only in these specific situations:
 
 ### 5.2 Sponsored banner content (always on while the app is running)
 
-- A `GET` to the URL configured in `ads_manifest_url` (default: a static JSON file we host). The request includes a generic `User-Agent: GameBoost/<version>` and **nothing else**. No tracking pixel, no fingerprint, no ad ID.
+- A `GET` to the URL configured in `ads_manifest_url` (default: a static JSON file we host). The request includes a generic `User-Agent: GameBoostApex/<version>` and **nothing else**. No tracking pixel, no fingerprint, no ad ID.
 - A `GET` to each banner's `image_url` to fetch the thumbnail. Same headers.
 - When you click a banner, your default browser opens to a UTM-tagged URL — at that point the destination page (which we host) takes over and is governed by section 6.
 
@@ -101,7 +101,7 @@ A single HEAD request to `https://api.github.com/repos/<owner>/<repo>/releases/l
 
 ## 6. Advertising
 
-GameBoost is monetized by ads. Two surfaces:
+GameBoostApex is monetized by ads. Two surfaces:
 
 ### 6.1 In-app banner
 
@@ -116,7 +116,7 @@ The creative content comes from the JSON manifest described in §5.2. The deskto
 
 ### 6.2 Hosted sponsor page (where the actual ad networks run)
 
-The destination URL is a web page we host (typically `https://gameboost.app/sponsor`). On that page, **and only on that page**, we run:
+The destination URL is a web page we host (typically `https://gameboostapex.app/sponsor`). On that page, **and only on that page**, we run:
 
 | Provider                | What they get                                                  | Their policy                                  |
 | ----------------------- | -------------------------------------------------------------- | --------------------------------------------- |
@@ -127,7 +127,7 @@ This is the legitimate way to use AdSense and Microsoft Advertising for a deskto
 
 ### 6.3 Cookies and identifiers
 
-The ad providers may set cookies / web-storage entries scoped to **their own domains** (`bat.bing.com`, `googleads.g.doubleclick.net`, etc.) when you visit the sponsor page in your browser. These cookies live in your browser's storage, not next to GameBoost's own configuration files. They are not readable by GameBoost.
+The ad providers may set cookies / web-storage entries scoped to **their own domains** (`bat.bing.com`, `googleads.g.doubleclick.net`, etc.) when you visit the sponsor page in your browser. These cookies live in your browser's storage, not next to GameBoostApex's own configuration files. They are not readable by GameBoostApex.
 
 ### 6.4 Sponsored insight cards
 
@@ -145,7 +145,7 @@ Ads are served as **non-personalized only** if your operating system signals a L
 
 ## 7. Analytics & telemetry
 
-GameBoost ships with telemetry **off by default**. There is currently no telemetry SDK in the application binary.
+GameBoostApex ships with telemetry **off by default**. There is currently no telemetry SDK in the application binary.
 
 If a future build adds an opt-in telemetry toggle, it will:
 
@@ -158,13 +158,13 @@ If a future build adds an opt-in telemetry toggle, it will:
 
 ## 8. Crash dumps
 
-If GameBoost crashes, Windows may write a memory dump to `%LOCALAPPDATA%\CrashDumps\`. We do **not** automatically collect or upload these. If you want to share one to help debug, you can attach it manually to a GitHub issue. The cleanup module includes a "Crash dumps" category so you can wipe them on demand.
+If GameBoostApex crashes, Windows may write a memory dump to `%LOCALAPPDATA%\CrashDumps\`. We do **not** automatically collect or upload these. If you want to share one to help debug, you can attach it manually to a GitHub issue. The cleanup module includes a "Crash dumps" category so you can wipe them on demand.
 
 ---
 
 ## 9. Optimizations and your system
 
-GameBoost can apply system-level changes (registry tweaks, service start types, scheduled-task disables, power-plan changes). Every one of these:
+GameBoostApex can apply system-level changes (registry tweaks, service start types, scheduled-task disables, power-plan changes). Every one of these:
 
 - runs only when you click **Apply selected**,
 - creates a per-rule backup in `backups\` so you can roll it back from `Safety → History`,
@@ -179,7 +179,7 @@ We are **not** responsible for system instability caused by changes you choose t
 
 Because there is no server-side account:
 
-- **Access / export** — every file the app writes is in `%LOCALAPPDATA%\GameBoostOptimizer\`. Copy it freely.
+- **Access / export** — every file the app writes is in `%LOCALAPPDATA%\GameBoostApexOptimizer\`. Copy it freely.
 - **Deletion** — uninstall the app and delete the folder above. Nothing else needs to happen.
 - **Portability** — the JSON / JSONL files in `stats\`, `history\`, and `benchmarks\` are plain text and meant to be moved between PCs.
 
@@ -194,7 +194,7 @@ For data the **ad providers** receive when you visit the sponsor page in your br
 
 ## 11. Children
 
-GameBoost is a system utility intended for adult users. It is not directed at children under 13. We do not knowingly collect data from children. If you believe a child's data has been collected in error, please contact us.
+GameBoostApex is a system utility intended for adult users. It is not directed at children under 13. We do not knowingly collect data from children. If you believe a child's data has been collected in error, please contact us.
 
 ---
 
@@ -203,7 +203,7 @@ GameBoost is a system utility intended for adult users. It is not directed at ch
 If we ever change how the app handles data, we will:
 
 1. Update this document with a new **Effective date**.
-2. Show a one-time in-app notice the next time you launch GameBoost after the change.
+2. Show a one-time in-app notice the next time you launch GameBoostApex after the change.
 3. Keep the previous version available in the project's Git history.
 
 ---

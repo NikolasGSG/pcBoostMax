@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------
-# GameBoost — git ignore
+# GameBoostApex — git ignore
 # --------------------------------------------------------------------
 
 # ---- Python ----
@@ -42,8 +42,8 @@ htmlcov/
 
 # ---- App runtime data (never commit user data!) ----
 # This protects against accidentally committing local state if you
-# ever symlink %LOCALAPPDATA%\GameBoostOptimizer into the repo.
-GameBoostOptimizer/
+# ever symlink %LOCALAPPDATA%\GameBoostApexOptimizer into the repo.
+GameBoostApexOptimizer/
 *.log
 ads_manifest.json
 

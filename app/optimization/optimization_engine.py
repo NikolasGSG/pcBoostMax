@@ -198,7 +198,7 @@ class OptimizationEngine:
 
         want_rp = self.config.create_restore_point if create_restore_point is None else create_restore_point
         if want_rp:
-            res = self.restore_points.create("GameBoost: before optimization plan")
+            res = self.restore_points.create("GameBoostApex: before optimization plan")
             report.restore_point_created = res.created
             report.restore_point_reason = res.reason
             self.bus.publish("safety.restore_point", res)

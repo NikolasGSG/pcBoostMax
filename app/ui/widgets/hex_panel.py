@@ -1,6 +1,6 @@
 """Apex hardware-style custom-painted shell components.
 
-These are the *signature* visuals of the GameBoost v2 redesign — the bits
+These are the *signature* visuals of the GameBoostApex v2 redesign — the bits
 that make the app stop looking like another generic "Tailwind on QSS"
 dashboard and start looking like Razer Synapse / Logitech G HUB.
 

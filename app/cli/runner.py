@@ -10,8 +10,8 @@ from typing import Callable, List, Optional
 # ---------------------------------------------------------------- top-level
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="GameBoost",
-        description="GameBoost CLI — headless access to optimization + diagnostics.",
+        prog="GameBoostApex",
+        description="GameBoostApex CLI — headless access to optimization + diagnostics.",
     )
     p.add_argument(
         "--cli", action="store_true",
@@ -370,7 +370,7 @@ def _cmd_services(args: argparse.Namespace) -> int:
         return 0 if not report.failed else 1
     if args.action == "restore":
         # We don't have the backup in the CLI flow — push the user to GUI.
-        print("Service restore requires the GUI history. Open GameBoost -> Settings -> Restore.")
+        print("Service restore requires the GUI history. Open GameBoostApex -> Settings -> Restore.")
         return 0
     return 1
 

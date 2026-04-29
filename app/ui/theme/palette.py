@@ -1,4 +1,4 @@
-"""Apex palette — single source of truth for every colour in GameBoost.
+"""Apex palette — single source of truth for every colour in GameBoostApex.
 
 Design intent: a hardware-grade HUD aesthetic in the spirit of Razer
 Synapse / Logitech G HUB. Obsidian-black surfaces, hairline rules, and

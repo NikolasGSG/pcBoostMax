@@ -1,6 +1,6 @@
-# GameBoost — Monetization Setup Runbook
+# GameBoostApex — Monetization Setup Runbook
 
-This is the full, step-by-step guide to turning GameBoost from a free
+This is the full, step-by-step guide to turning GameBoostApex from a free
 optimizer into a revenue-generating product **legitimately**, using
 Google AdSense + Microsoft Advertising, **without violating either
 network's Terms of Service**.
@@ -25,7 +25,7 @@ has any complaint about your distribution model.
 ### 1.1 Buy or pick a domain
 
 Anything works. The defaults in `app/core/config.py` use
-`https://gameboost.app/` — change `ads_manifest_url` and
+`https://gameboostapex.app/` — change `ads_manifest_url` and
 `ads_sponsor_url` to whatever domain you own. If you don't have one,
 GitHub Pages on a free `<user>.github.io` subdomain works fine for
 both AdSense and Microsoft Advertising approvals.
@@ -68,7 +68,7 @@ Drop this into `ads/manifest.json` on your site:
       "cta": "See picks",
       "click_url": "https://<your-site>/sponsor/?slot=nvme",
       "image_url": "https://<your-site>/ads/img/nvme-q2.png",
-      "sponsor": "GameBoost Picks",
+      "sponsor": "GameBoostApex Picks",
       "weight": 1.0,
       "expires_at": "2026-12-31T23:59:59Z"
     }
@@ -149,15 +149,15 @@ These slot directly into `app/monetization/affiliate.py` —
 Two strings in `app/core/config.py`:
 
 ```python
-ads_manifest_url: str = "https://gameboost.app/ads/manifest.json"
-ads_sponsor_url:  str = "https://gameboost.app/sponsor"
+ads_manifest_url: str = "https://gameboostapex.app/ads/manifest.json"
+ads_sponsor_url:  str = "https://gameboostapex.app/sponsor"
 ```
 
 Either:
 
 - **edit them directly and rebuild** (quickest), or
 - override per-user-installation by editing the user's
-  `%LOCALAPPDATA%\GameBoostOptimizer\config.json` after the first
+  `%LOCALAPPDATA%\GameBoostApexOptimizer\config.json` after the first
   launch (handy for white-label builds without rebuilding).
 
 The values are read on every banner refresh, so a config change takes
@@ -170,7 +170,7 @@ effect on the next refresh — no restart required.
 Adding or rotating creatives is just a `git push` to your Pages repo
 that updates `ads/manifest.json`. Within 24 h every running app picks
 up the change automatically (the on-disk cache TTL is one day; manual
-refresh by deleting `%LOCALAPPDATA%\GameBoostOptimizer\ads_manifest.json`).
+refresh by deleting `%LOCALAPPDATA%\GameBoostApexOptimizer\ads_manifest.json`).
 
 Recommended editorial cadence:
 

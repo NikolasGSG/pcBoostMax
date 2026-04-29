@@ -1,7 +1,7 @@
 """Apex global QSS generator.
 
 Produces one big stylesheet string that, when applied to the QApplication,
-overrides Qt's default chrome head-to-toe in the GameBoost "Apex" style:
+overrides Qt's default chrome head-to-toe in the GameBoostApex "Apex" style:
 obsidian black, hairline rules, flat lime/cyan accents, tight radii.
 """
 from __future__ import annotations

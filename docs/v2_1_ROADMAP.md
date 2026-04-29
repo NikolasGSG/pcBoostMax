@@ -1,4 +1,4 @@
-# GameBoost v2.1 — Feature Roadmap (Ads-Only, Free Forever)
+# GameBoostApex v2.1 — Feature Roadmap (Ads-Only, Free Forever)
 
 > **Monetization model:** banner ads + sponsored insight cards.
 > **The full app stays free.** No paywalls, no rewarded-ad gates, no
@@ -196,7 +196,7 @@ Each feature lists `Effort` (S=1-2 days, M=3-5 days, L=1-2 weeks),
 ### E5. Game Benchmark Mode  &nbsp;`Effort: L` `Goal: V`
 - **What:** during a user-defined window, captures FPS/frametime/CPU%/GPU%/
   temps. Saves to `benchmarks/` as JSON. Side-by-side **Before vs After
-  tuning** view + PNG export with a "Optimised by GameBoost" watermark.
+  tuning** view + PNG export with a "Optimised by GameBoostApex" watermark.
 - **Why ads-friendly:** the watermarked share card spreads on Discord/
   Reddit → free user acquisition.
 
@@ -212,14 +212,14 @@ Each feature lists `Effort` (S=1-2 days, M=3-5 days, L=1-2 weeks),
 
 ### F2. Share Card Generator  &nbsp;`Effort: S` `Goal: V`
 - **What:** export a 1200×630 PNG for Twitter/Reddit/Discord: "+28 FPS in
-  CS2 with GameBoost — gameboost.app". Triggered after benchmark runs and
+  CS2 with GameBoostApex — gameboostapex.app". Triggered after benchmark runs and
   major plan applications.
 - **Hook:** new `ShareCardRenderer` using `QPainter` to compose the PNG.
 
 ### F3. Quick Actions on Tray  &nbsp;`Effort: S` `Goal: D`
 - **What:** right-click the tray icon → instant "Memory Trim", "Game
   Mode", "Cleanup". No window open required. Each click = a session.
-- **Hook:** extend `GameBoostTray` with new menu entries.
+- **Hook:** extend `GameBoostApexTray` with new menu entries.
 
 ### F4. Customisable Dashboard  &nbsp;`Effort: M` `Goal: S`
 - **What:** drag-to-reorder tiles; hide/show specific cards (FPS, CPU,
@@ -261,13 +261,13 @@ Each feature lists `Effort` (S=1-2 days, M=3-5 days, L=1-2 weeks),
 ## Group H — Power-User / Quality of Life
 
 ### H1. CLI Mode  &nbsp;`Effort: S` `Goal: S`
-- **What:** `gameboost.exe game-mode --on`, `gameboost.exe cleanup --run`,
-  `gameboost.exe profile apply --game CS2`. Streamers love this.
+- **What:** `gameboostapex.exe game-mode --on`, `gameboostapex.exe cleanup --run`,
+  `gameboostapex.exe profile apply --game CS2`. Streamers love this.
 - **Hook:** thin `argparse` wrapper that talks to a running instance via
   named pipe, falls back to spinning one up headless.
 
 ### H2. Plugin System  &nbsp;`Effort: M` `Goal: V`
-- **What:** drop-in third-party rules under `%LOCALAPPDATA%/GameBoost/
+- **What:** drop-in third-party rules under `%LOCALAPPDATA%/GameBoostApex/
   rules/external/`. Each plugin is a signed Python file declaring an
   `OptimizationRule` subclass. Community can publish on GitHub.
 - **Hook:** `PluginLoader` that scans the dir on startup, sandboxes

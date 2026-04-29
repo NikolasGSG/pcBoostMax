@@ -1,4 +1,4 @@
-"""GameBoost brand mark — custom-painted hex bolt + wordmark.
+"""GameBoostApex brand mark — custom-painted hex bolt + wordmark.
 
 This is the logo that sits at the top of the sidebar. It's drawn entirely
 with QPainter so it scales perfectly at any DPI, and so we never need to
@@ -34,14 +34,14 @@ from ..theme.typography import Typography
 
 
 class BrandMark(QWidget):
-    """Hex bolt + 'GAMEBOOST' / 'APEX' wordmark."""
+    """Hex bolt + 'GAMEBOOSTAPEX' / 'APEX' wordmark."""
 
     def __init__(
         self,
         palette: Palette,
         typography: Typography,
         *,
-        wordmark: str = "GAMEBOOST",
+        wordmark: str = "GAMEBOOSTAPEX",
         sub: str = "APEX",
         accent: Optional[str] = None,
         parent: Optional[QWidget] = None,

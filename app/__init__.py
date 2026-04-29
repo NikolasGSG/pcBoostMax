@@ -1,1 +1,1 @@
-"""GameBoost Optimizer application package."""
+"""GameBoostApex Optimizer application package."""

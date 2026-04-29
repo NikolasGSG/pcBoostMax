@@ -32,7 +32,7 @@ Manifest schema (versioned)::
 Network behaviour:
 
 * HEAD-only ETag check on second-and-subsequent loads.
-* 24h on-disk cache in ``%LOCALAPPDATA%\\GameBoostOptimizer\\ads_manifest.json``.
+* 24h on-disk cache in ``%LOCALAPPDATA%\\GameBoostApexOptimizer\\ads_manifest.json``.
 * On any error: fall back to bundled defaults (project's own GitHub link).
 * Never blocks UI startup — calls live on a background thread.
 """
@@ -121,7 +121,7 @@ def _bundled_default() -> Manifest:
                 body="From 35s to 7s on Cyberpunk launch. Top picks under $80.",
                 cta="See deals",
                 click_url="https://NikolasGSG.github.io/pcBoostMax/sponsor/?slot=nvme",
-                sponsor="GameBoost Picks",
+                sponsor="GameBoostApex Picks",
                 weight=1.0,
             ),
             Creative(
@@ -130,7 +130,7 @@ def _bundled_default() -> Manifest:
                 body="Free yourself from page-faulting. Curated kits, all brands.",
                 cta="Browse RAM kits",
                 click_url="https://NikolasGSG.github.io/pcBoostMax/sponsor/?slot=ram",
-                sponsor="GameBoost Picks",
+                sponsor="GameBoostApex Picks",
                 weight=1.0,
             ),
             Creative(
@@ -139,7 +139,7 @@ def _bundled_default() -> Manifest:
                 body="Try a gaming-tuned VPN free for 30 days.",
                 cta="Try free",
                 click_url="https://NikolasGSG.github.io/pcBoostMax/sponsor/?slot=vpn",
-                sponsor="GameBoost Picks",
+                sponsor="GameBoostApex Picks",
                 weight=0.7,
             ),
         ],
@@ -214,7 +214,7 @@ def fetch(url: str, *, timeout: float = 4.0) -> Manifest:
         req = urllib.request.Request(
             url,
             headers={
-                "User-Agent": "GameBoost/2.1 (+https://gameboost.app)",
+                "User-Agent": "GameBoostApex/2.1 (+https://gameboostapex.app)",
                 "Accept": "application/json",
             },
         )
@@ -245,7 +245,7 @@ def build_click_url(base_url: str, creative_id: str, slot: str) -> str:
     sep = "&" if "?" in base_url else "?"
     return (
         f"{base_url}{sep}"
-        f"utm_source=gameboost"
+        f"utm_source=gameboostapex"
         f"&utm_medium=banner"
         f"&utm_campaign={creative_id}"
         f"&utm_content={slot}"

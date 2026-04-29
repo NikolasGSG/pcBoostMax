@@ -94,7 +94,7 @@ class Sidebar(QFrame):
         layout.setSpacing(4)
 
         # -- Brand mark (custom-painted hex bolt + wordmark) --
-        brand = BrandMark(palette, typography, wordmark="GAMEBOOST", sub="APEX v2")
+        brand = BrandMark(palette, typography, wordmark="GAMEBOOSTAPEX", sub="APEX v2")
         brand.setFixedHeight(56)
         layout.addWidget(brand)
         layout.addSpacing(20)

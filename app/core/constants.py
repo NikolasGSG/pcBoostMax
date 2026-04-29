@@ -1,10 +1,10 @@
 """App-wide constants. Centralised so every module agrees."""
 from __future__ import annotations
 
-APP_NAME = "GameBoost APEX"
-APP_SHORT = "GameBoost"
-APP_VERSION = "2.1.3"
-ORG_NAME = "GameBoost"
+APP_NAME = "GameBoostApex"
+APP_SHORT = "GameBoostApex"
+APP_VERSION = "2.1.4"
+ORG_NAME = "GameBoostApex"
 
 # Monitoring cadence
 MONITOR_SAMPLE_HZ = 2            # samples per second

@@ -45,7 +45,7 @@ from .views.safety_view import SafetyView
 from .views.settings_view import SettingsView
 from .widgets.sidebar import NavEntry, Sidebar
 from .widgets.ticker_bar import TickerBar
-from .widgets.tray_icon import GameBoostTray, tray_icon
+from .widgets.tray_icon import GameBoostApexTray, tray_icon
 
 log = get_logger("ui.main_window")
 
@@ -188,7 +188,7 @@ class MainWindow(QMainWindow):
 
         # ---- System tray icon (always created, visible if supported) ----
         self.setWindowIcon(tray_icon(theme.palette))
-        self._tray = GameBoostTray(
+        self._tray = GameBoostApexTray(
             palette=theme.palette,
             on_show=self._tray_show_main,
             on_toggle_game_mode=self._toggle_game_mode_from_tray,
@@ -228,7 +228,7 @@ class MainWindow(QMainWindow):
             event.ignore()
             self.hide()
             self._tray.notify(
-                "GameBoost is still running",
+                "GameBoostApex is still running",
                 "We're watching in the background. Double-click the tray icon to return.",
             )
             return

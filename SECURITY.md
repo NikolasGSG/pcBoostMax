@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-If you discover a security issue in GameBoost, please **do not** open a
+If you discover a security issue in GameBoostApex, please **do not** open a
 public GitHub issue. Instead:
 
 1. Open a GitHub Security Advisory in this repository
@@ -11,7 +11,7 @@ public GitHub issue. Instead:
 
 Please include:
 
-- The version of GameBoost (visible in `Settings → About`).
+- The version of GameBoostApex (visible in `Settings → About`).
 - Your operating system and version (e.g., Windows 11 24H2 x64).
 - Whether the app was running as Administrator.
 - A reproduction recipe — the smaller, the better.

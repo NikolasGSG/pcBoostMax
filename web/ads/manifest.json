@@ -10,7 +10,7 @@
       "cta": "See deal",
       "click_url": "https://nikolasgsg.github.io/pcBoostMax/sponsor/?slot=nvme",
       "image_url": "",
-      "sponsor": "GameBoost Picks",
+      "sponsor": "GameBoostApex Picks",
       "weight": 1.0,
       "expires_at": "2026-12-31T23:59:59Z"
     },
@@ -21,7 +21,7 @@
       "cta": "Browse RAM kits",
       "click_url": "https://nikolasgsg.github.io/pcBoostMax/sponsor/?slot=ram",
       "image_url": "",
-      "sponsor": "GameBoost Picks",
+      "sponsor": "GameBoostApex Picks",
       "weight": 0.9,
       "expires_at": "2026-12-31T23:59:59Z"
     },
@@ -32,7 +32,7 @@
       "cta": "See cooling deals",
       "click_url": "https://nikolasgsg.github.io/pcBoostMax/sponsor/?slot=cooling",
       "image_url": "",
-      "sponsor": "GameBoost Picks",
+      "sponsor": "GameBoostApex Picks",
       "weight": 0.7,
       "expires_at": "2026-12-31T23:59:59Z"
     },
@@ -43,7 +43,7 @@
       "cta": "Browse picks",
       "click_url": "https://nikolasgsg.github.io/pcBoostMax/sponsor/?slot=peripherals",
       "image_url": "",
-      "sponsor": "GameBoost Picks",
+      "sponsor": "GameBoostApex Picks",
       "weight": 0.6,
       "expires_at": "2026-12-31T23:59:59Z"
     }

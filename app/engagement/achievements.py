@@ -173,6 +173,6 @@ DEFAULT_ACHIEVEMENTS: List[Achievement] = [
     Achievement("game_mode_1h", "Warmed Up", "1 hour with Game Mode active", "gamepad", "bronze", 1, "h"),
     Achievement("game_mode_100h", "Pro Gamer", "100 hours with Game Mode active", "gamepad", "platinum", 100, "h"),
     # Streaks (incremented manually by StreakService listeners)
-    Achievement("streak_7", "Week One", "Open GameBoost 7 days in a row", "calendar", "silver", 7),
-    Achievement("streak_30", "Habit Formed", "Open GameBoost 30 days in a row", "calendar", "gold", 30),
+    Achievement("streak_7", "Week One", "Open GameBoostApex 7 days in a row", "calendar", "silver", 7),
+    Achievement("streak_30", "Habit Formed", "Open GameBoostApex 30 days in a row", "calendar", "gold", 30),
 ]

@@ -99,7 +99,7 @@ class WelcomeDialog(QDialog):
 
         body.addWidget(self._section(
             "What this app actually does",
-            "GameBoost inspects your PC, suggests Windows settings that can "
+            "GameBoostApex inspects your PC, suggests Windows settings that can "
             "improve gaming performance, and applies only the ones you "
             "explicitly tick. It never installs drivers, never downloads "
             "anything, never contacts a server. Every action is local.",
@@ -171,7 +171,7 @@ class WelcomeDialog(QDialog):
         version_label.setStyleSheet(f"color: {palette.text_tertiary};")
         buttons.addWidget(version_label)
 
-        self._continue_btn = QPushButton("Continue to GameBoost")
+        self._continue_btn = QPushButton("Continue to GameBoostApex")
         self._continue_btn.setProperty("variant", "primary")
         self._continue_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self._continue_btn.setEnabled(False)

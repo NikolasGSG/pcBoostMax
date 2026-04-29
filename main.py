@@ -1,4 +1,4 @@
-"""GameBoost Optimizer — entry point.
+"""GameBoostApex Optimizer — entry point.
 
 Launches the PyQt6 application, wires up the controller, viewmodels and
 the main window. Business logic lives in ``app.core`` and its siblings;
@@ -26,7 +26,7 @@ if _cli_invoked(sys.argv):
     # flashing console). That detaches stdout/stderr from any terminal,
     # so a CLI invocation of the bundled binary would print to nowhere.
     # Re-attach to the parent process's console (PowerShell, cmd.exe,
-    # Windows Terminal) so `gameboost.exe --cli ...` works as expected.
+    # Windows Terminal) so `gameboostapex.exe --cli ...` works as expected.
     if sys.platform == "win32" and getattr(sys, "frozen", False):
         try:
             import ctypes

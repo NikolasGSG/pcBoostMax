@@ -150,7 +150,7 @@ class SettingsView(QWidget):
             eyebrow_color=palette.accent,
         ))
         autopilot_blurb = QLabel(
-            "When AutoPilot is on, GameBoost silently applies the safe Recommended "
+            "When AutoPilot is on, GameBoostApex silently applies the safe Recommended "
             "preset, swaps to per-game profiles when a game starts, and resolves "
             "critical insights automatically. Everything stays reversible from "
             "the Safety tab."
@@ -200,7 +200,7 @@ class SettingsView(QWidget):
         ))
 
         privacy_blurb = QLabel(
-            "GameBoost runs entirely on your PC. Banners are sponsored "
+            "GameBoostApex runs entirely on your PC. Banners are sponsored "
             "and clicking them opens your default browser. See PRIVACY.md "
             "in the app folder for the full policy."
         )
@@ -236,7 +236,7 @@ class SettingsView(QWidget):
         ))
 
         info_card.body().addWidget(_InfoRow("App data", str(APP_DATA_DIR), palette, typography))
-        info_card.body().addWidget(_InfoRow("Log file", str(LOG_DIR / "gameboost.log"), palette, typography))
+        info_card.body().addWidget(_InfoRow("Log file", str(LOG_DIR / "gameboostapex.log"), palette, typography))
 
         log_btns = QHBoxLayout()
         log_btns.setSpacing(8)
@@ -357,17 +357,17 @@ class SettingsView(QWidget):
     def _copy_log_path(self) -> None:
         from PyQt6.QtGui import QGuiApplication
 
-        QGuiApplication.clipboard().setText(str(LOG_DIR / "gameboost.log"))
+        QGuiApplication.clipboard().setText(str(LOG_DIR / "gameboostapex.log"))
         QMessageBox.information(self, "Copied", "Log path copied to clipboard.")
 
     def _export_log(self) -> None:
         from pathlib import Path
 
-        default = str(Path.home() / "Downloads" / "gameboost.log")
+        default = str(Path.home() / "Downloads" / "gameboostapex.log")
         path, _ = QFileDialog.getSaveFileName(self, "Export log", default, "Log files (*.log)")
         if not path:
             return
-        src = LOG_DIR / "gameboost.log"
+        src = LOG_DIR / "gameboostapex.log"
         if not src.exists():
             QMessageBox.warning(self, "Export log", "No log file yet.")
             return
@@ -378,7 +378,7 @@ class SettingsView(QWidget):
         from pathlib import Path
         from ...utils.diagnostics import export_bundle
 
-        default = str(Path.home() / "Downloads" / "gameboost-diagnostics.zip")
+        default = str(Path.home() / "Downloads" / "gameboostapex-diagnostics.zip")
         path, _ = QFileDialog.getSaveFileName(
             self, "Export diagnostics bundle", default, "Zip archives (*.zip)"
         )

@@ -49,7 +49,7 @@ class EventBus:
             except Exception:  # pragma: no cover - listeners should never break the bus
                 import logging
 
-                logging.getLogger("gameboost.event_bus").exception("Listener failed for %s", topic)
+                logging.getLogger("gameboostapex.event_bus").exception("Listener failed for %s", topic)
 
     def clear(self) -> None:
         with self._lock:

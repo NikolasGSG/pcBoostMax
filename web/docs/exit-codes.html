@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GameBoost — EXE Return Codes</title>
-<meta name="description" content="Documentation of the return-code values emitted by GameBoost.exe. Used by installers, automation scripts, and the Microsoft Store certification team.">
+<title>GameBoostApex — EXE Return Codes</title>
+<meta name="description" content="Documentation of the return-code values emitted by GameBoostApex.exe. Used by installers, automation scripts, and the Microsoft Store certification team.">
 <link rel="canonical" href="https://nikolasgsg.github.io/pcBoostMax/docs/exit-codes.html">
 
 <style>
@@ -125,15 +125,15 @@ a { color: var(--accent-cyan); }
 <body>
 <div class="wrap">
 <header>
-  <h1>GameBoost <span class="accent">EXE Return Codes</span></h1>
+  <h1>GameBoostApex <span class="accent">EXE Return Codes</span></h1>
   <p class="muted">
     Documentation of every process exit code emitted by
-    <code>GameBoost.exe</code>. Used by deployment scripts, MDM systems,
+    <code>GameBoostApex.exe</code>. Used by deployment scripts, MDM systems,
     silent-installer wrappers, and the Microsoft Store certification team.
   </p>
   <p class="muted">
     <strong>Last updated:</strong> 2026-04-28 · <strong>Applies to:</strong>
-    GameBoost 2.1.0 and later.
+    GameBoostApex 2.1.0 and later.
   </p>
 </header>
 
@@ -185,7 +185,7 @@ a { color: var(--accent-cyan); }
   </tbody>
 </table>
 
-<h2>Installer (<code>GameBoost-X.Y.Z-Setup.exe</code>) behaviour</h2>
+<h2>Installer (<code>GameBoostApex-X.Y.Z-Setup.exe</code>) behaviour</h2>
 
 <p class="muted">
   The Inno Setup installer is <strong>silent by default</strong> in
@@ -235,7 +235,7 @@ a { color: var(--accent-cyan); }
       <td class="code">/DIR="path"</td>
       <td>
         Override the per-user install directory (default
-        <code>%LocalAppData%\Programs\GameBoost</code>).
+        <code>%LocalAppData%\Programs\GameBoostApex</code>).
       </td>
     </tr>
   </tbody>
@@ -259,12 +259,12 @@ a { color: var(--accent-cyan); }
 
 <h3>GUI launch — no <code>--cli</code> flag</h3>
 <p>
-  Launching <code>GameBoost.exe</code> without arguments opens the Qt
+  Launching <code>GameBoostApex.exe</code> without arguments opens the Qt
   graphical interface. The process returns <code>0</code> when the user
   closes the main window normally, or <code>1</code> if a fatal Qt
   exception occurred during start-up (for example, no display server in
   Windows Server Core). The detail of any fatal exception is written to
-  <code>%APPDATA%\GameBoost\logs\gameboost.log</code>.
+  <code>%APPDATA%\GameBoostApex\logs\gameboostapex.log</code>.
 </p>
 
 <h3><code>--cli optimize</code></h3>
@@ -297,7 +297,7 @@ a { color: var(--accent-cyan); }
 <h3><code>--cli rollback &lt;scope&gt;</code></h3>
 <table>
   <tr><td class="code success">0</td><td>Rollback completed (or there was nothing to roll back).</td></tr>
-  <tr><td class="code warn">1</td><td>The targeted rollback action failed. Run <code>GameBoost --cli rollback session</code> to retry.</td></tr>
+  <tr><td class="code warn">1</td><td>The targeted rollback action failed. Run <code>GameBoostApex --cli rollback session</code> to retry.</td></tr>
 </table>
 
 <h3><code>--cli services &lt;action&gt;</code></h3>
@@ -308,7 +308,7 @@ a { color: var(--accent-cyan); }
 
 <h2>System-level codes that can also surface</h2>
 <p class="muted">
-  These are not emitted by GameBoost itself, but by the Windows kernel /
+  These are not emitted by GameBoostApex itself, but by the Windows kernel /
   C runtime if the process terminates abnormally. They are documented
   here for completeness.
 </p>
@@ -327,7 +327,7 @@ a { color: var(--accent-cyan); }
     </tr>
     <tr>
       <td class="code crit">0xC0000409<br>3221266694</td>
-      <td>Stack buffer overrun. Reported as a Qt teardown race in PyInstaller 6.x — fully mitigated in GameBoost 2.1.0 and later by an explicit <code>os._exit()</code> from the CLI path.</td>
+      <td>Stack buffer overrun. Reported as a Qt teardown race in PyInstaller 6.x — fully mitigated in GameBoostApex 2.1.0 and later by an explicit <code>os._exit()</code> from the CLI path.</td>
     </tr>
   </tbody>
 </table>
@@ -335,7 +335,7 @@ a { color: var(--accent-cyan); }
 <h2>How to capture the exit code</h2>
 
 <h3>PowerShell</h3>
-<pre>$proc = Start-Process -FilePath ".\GameBoost.exe" `
+<pre>$proc = Start-Process -FilePath ".\GameBoostApex.exe" `
     -ArgumentList "--cli","services","list" `
     -Wait -PassThru -WindowStyle Hidden
 $proc.ExitCode  # 0 on success</pre>
@@ -343,26 +343,26 @@ $proc.ExitCode  # 0 on success</pre>
 <p class="muted">
   Note: the PowerShell <code>&amp;</code> call operator returns
   <code>$LASTEXITCODE</code> as <code>$null</code> for the
-  windowed-subsystem GameBoost.exe because the C runtime detaches stdio.
+  windowed-subsystem GameBoostApex.exe because the C runtime detaches stdio.
   Use <code>Start-Process -Wait -PassThru</code> instead — it reads the
   exit code via <code>GetExitCodeProcess</code> at the kernel level.
 </p>
 
 <h3>Command Prompt (cmd.exe)</h3>
-<pre>GameBoost.exe --cli optimize --plan max-perf
+<pre>GameBoostApex.exe --cli optimize --plan max-perf
 echo %ERRORLEVEL%</pre>
 
 <h3>Python <code>subprocess</code></h3>
 <pre>import subprocess
 result = subprocess.run(
-    ["GameBoost.exe", "--cli", "bench", "ping"],
+    ["GameBoostApex.exe", "--cli", "bench", "ping"],
     capture_output=True, text=True, check=False,
 )
 print(result.returncode)  # 0 on success</pre>
 
 <footer>
   <p>
-    GameBoost is open-source. The canonical source for these codes is
+    GameBoostApex is open-source. The canonical source for these codes is
     <a href="https://github.com/NikolasGSG/pcBoostMax/blob/main/app/cli/runner.py">app/cli/runner.py</a>
     in the public repository.
   </p>

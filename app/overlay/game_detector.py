@@ -26,7 +26,7 @@ log = get_logger("overlay.game_detector")
 _NON_GAME_EXES = {
     "explorer.exe",
     "taskmgr.exe",
-    "gameboost.exe",   # us
+    "gameboostapex.exe",   # us
     "pycharm64.exe",
     "code.exe",
     "winlogon.exe",

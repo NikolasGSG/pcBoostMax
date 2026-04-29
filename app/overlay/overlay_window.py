@@ -229,7 +229,7 @@ class OverlayWindow(QWidget):
         p.setPen(QColor(self._pal.text_secondary))
         heading_rect = QRect(r.x() + padding_x, r.y() + padding_y - 2, r.width() - padding_x * 2, heading_h)
         src = "PRESENTMON" if self._fps.source == "presentmon" else "HUD"
-        p.drawText(heading_rect, Qt.AlignmentFlag.AlignLeft, f"GAMEBOOST · {src}")
+        p.drawText(heading_rect, Qt.AlignmentFlag.AlignLeft, f"GAMEBOOSTAPEX · {src}")
 
         # ---- value rows ----
         y = heading_rect.bottom() + 6

@@ -4,7 +4,7 @@ Usage:
     python build_exe.py
 
 Output:
-    dist/GameBoost.exe
+    dist/GameBoostApex.exe
 """
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 ENTRY = ROOT / "main.py"
-NAME = "GameBoost"
+NAME = "GameBoostApex"
 DIST = ROOT / "dist"
 BUILD = ROOT / "build"
 

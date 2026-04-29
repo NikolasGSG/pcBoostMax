@@ -1,6 +1,6 @@
 """Structured, rotating logging with a simple JSON-friendly formatter.
 
-Logs land in ``%LOCALAPPDATA%/GameBoostOptimizer/logs/gameboost.log`` and
+Logs land in ``%LOCALAPPDATA%/GameBoostApexOptimizer/logs/gameboostapex.log`` and
 mirror to the console during development. The same logger is shared by
 every module via :func:`get_logger`.
 """
@@ -67,7 +67,7 @@ def configure_logging(level: int = logging.INFO) -> None:
     root.handlers.clear()
 
     file_handler = logging.handlers.RotatingFileHandler(
-        LOG_DIR / "gameboost.log",
+        LOG_DIR / "gameboostapex.log",
         maxBytes=2_000_000,
         backupCount=5,
         encoding="utf-8",
@@ -89,7 +89,7 @@ def configure_logging(level: int = logging.INFO) -> None:
 
 
 def get_logger(name: str) -> logging.Logger:
-    """Module-level logger helper — prefixes with ``gameboost.``."""
-    if not name.startswith("gameboost"):
-        name = f"gameboost.{name}"
+    """Module-level logger helper — prefixes with ``gameboostapex.``."""
+    if not name.startswith("gameboostapex"):
+        name = f"gameboostapex.{name}"
     return logging.getLogger(name)

@@ -53,7 +53,7 @@ class AffiliateRegistry:
 
 
 def default_registry() -> AffiliateRegistry:
-    """Built-in partners shipped with GameBoost.
+    """Built-in partners shipped with GameBoostApex.
 
     Active programmes:
       * Amazon Associates  (tag=ngsgsoftworks-20)

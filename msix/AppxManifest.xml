@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ============================================================================
-  GameBoost — MSIX AppxManifest
+  GameBoostApex — MSIX AppxManifest
   ============================================================================
   Microsoft Store Policy 10.2.9 forbids any installer UI on a Win32 EXE/MSI
   package. MSIX bypasses that policy entirely because the Microsoft Store
@@ -15,7 +15,7 @@
     @@MSIX_PUBLISHER_DISPLAY_NAME@@  ->  vars.MSIX_PUBLISHER_DISPLAY_NAME
     @@MSIX_VERSION@@                 ->  the build version (e.g. 2.1.3.0)
 
-  Look them up in Partner Center → Apps → GameBoost → Product identity:
+  Look them up in Partner Center → Apps → GameBoostApex → Product identity:
 
     Identity / Name              -> MSIX_IDENTITY_NAME
     Identity / Publisher (CN=…)  -> MSIX_PUBLISHER
@@ -38,7 +38,7 @@
       ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>GameBoost</DisplayName>
+    <DisplayName>GameBoostApex</DisplayName>
     <PublisherDisplayName>@@MSIX_PUBLISHER_DISPLAY_NAME@@</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
     <Description>Local-only Windows performance optimizer for gamers. Explains every change, rolls back every action, runs entirely on your machine.</Description>
@@ -54,11 +54,11 @@
   </Resources>
 
   <Applications>
-    <Application Id="GameBoost"
-                 Executable="VFS\ProgramFilesX64\GameBoost\GameBoost.exe"
+    <Application Id="GameBoostApex"
+                 Executable="VFS\ProgramFilesX64\GameBoostApex\GameBoostApex.exe"
                  EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-          DisplayName="GameBoost"
+          DisplayName="GameBoostApex"
           Description="Windows performance optimizer for gamers"
           BackgroundColor="#0B0F19"
           Square150x150Logo="Assets\Square150x150Logo.png"
@@ -67,7 +67,7 @@
             Wide310x150Logo="Assets\Wide310x150Logo.png"
             Square71x71Logo="Assets\Square71x71Logo.png"
             Square310x310Logo="Assets\Square310x310Logo.png"
-            ShortName="GameBoost">
+            ShortName="GameBoostApex">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo" />
             <uap:ShowOn Tile="wide310x150Logo" />

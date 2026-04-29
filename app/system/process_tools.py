@@ -36,7 +36,7 @@ PROTECTED_NAMES = {
     "winlogon.exe", "fontdrvhost.exe", "dwm.exe", "explorer.exe",
     "svchost.exe", "msmpeng.exe", "securityhealthservice.exe",
     "audiodg.exe",
-    "gameboost.exe",       # don't suicide
+    "gameboostapex.exe",       # don't suicide
     "python.exe", "pythonw.exe",
     "powershell.exe",
 }

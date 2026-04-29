@@ -1,7 +1,7 @@
 """Filesystem paths used across the application.
 
-All writable data lives under ``%LOCALAPPDATA%/GameBoostOptimizer`` on Windows
-(or ``~/.gameboost-optimizer`` elsewhere, for development on other OSes).
+All writable data lives under ``%LOCALAPPDATA%/GameBoostApexOptimizer`` on Windows
+(or ``~/.gameboostapex-optimizer`` elsewhere, for development on other OSes).
 """
 from __future__ import annotations
 
@@ -13,8 +13,8 @@ from pathlib import Path
 def _data_root() -> Path:
     if sys.platform == "win32":
         base = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
-        return Path(base) / "GameBoostOptimizer"
-    return Path.home() / ".gameboost-optimizer"
+        return Path(base) / "GameBoostApexOptimizer"
+    return Path.home() / ".gameboostapex-optimizer"
 
 
 APP_DATA_DIR: Path = _data_root()
