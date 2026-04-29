@@ -7,10 +7,8 @@
   package. MSIX bypasses that policy entirely because the Microsoft Store
   performs the install itself.
 
-  IDENTITY VALUES — must be filled in by CI before MakeAppx packs.
-  ----------------------------------------------------------------
-  The three @@PLACEHOLDERS@@ below are substituted at build time by
-  release.yml using repo-level variables:
+  IDENTITY VALUES (substituted by release.yml at build time):
+  The three @@PLACEHOLDERS@@ below are filled from repo variables:
 
     @@MSIX_IDENTITY_NAME@@           ->  vars.MSIX_IDENTITY_NAME
     @@MSIX_PUBLISHER@@               ->  vars.MSIX_PUBLISHER
