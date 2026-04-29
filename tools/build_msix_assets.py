@@ -12,6 +12,11 @@ Usage::
     python tools/build_msix_assets.py msix/Assets        # default
     python tools/build_msix_assets.py --force            # regenerate even
                                                           # if files exist
+    python tools/build_msix_assets.py --marketing        # ALSO emit optional
+                                                          # Store-listing logos
+                                                          # (720x1080, 1080x1080,
+                                                          # 2400x1200) into
+                                                          # ./marketing_assets/
 
 Run by ``.github/workflows/release.yml`` during the MSIX packaging
 step. Pillow is the only runtime dependency.
@@ -62,6 +67,18 @@ TILES: list[tuple[str, int, int]] = [
     ("Square310x310Logo.png", 310, 310),
     ("Wide310x150Logo.png", 310, 150),
     ("SplashScreen.png", 620, 300),
+]
+
+# Optional Store-listing images used by Partner Center → Store listings →
+# Store logos. NOT referenced by AppxManifest — they live outside the
+# MSIX so we keep them in a separate output folder.
+#
+# Microsoft uses these on featured-app surfaces (start carousel,
+# spotlight cards, themed lists). 9:16 is the most commonly surfaced.
+MARKETING_TILES: list[tuple[str, int, int]] = [
+    ("StoreLogo_720x1080.png", 720, 1080),     # 9:16  — featured carousel
+    ("StoreLogo_1080x1080.png", 1080, 1080),   # 1:1   — spotlight tile
+    ("StoreLogo_2400x1200.png", 2400, 1200),   # 23:10 — wide hero
 ]
 
 
@@ -197,19 +214,108 @@ def _render_horizontal(width: int, height: int) -> Image.Image:
         fill=TEXT_PRIMARY,
     )
 
+    # Cyan rule under the wordmark.
+    rule_y = mark_cy + height * 0.05 + title_h + max(8, int(width * 0.012))
+    rule_w = int(width * 0.36)
+    draw.line(
+        [((width - rule_w) // 2, rule_y), ((width + rule_w) // 2, rule_y)],
+        fill=ACCENT_CYAN,
+        width=max(1, int(width * 0.003)),
+    )
+
     # Sub-label "APEX" in cyan, tracked.
     sub_size = max(10, int(round(height * 0.13)))
     sub_font = _load_font(sub_size, weight="bold")
     sub = "PERFORMANCE TUNER FOR GAMERS"
     sbbox = draw.textbbox((0, 0), sub, font=sub_font)
     draw.text(
-        (text_x_start - sbbox[0], mark_cy + height * 0.05 - sbbox[1]),
+        (text_x_start - sbbox[0], rule_y + max(16, int(width * 0.020))),
         sub,
         font=sub_font,
         fill=ACCENT_CYAN,
     )
 
     return img
+
+
+def _render_portrait(width: int, height: int) -> Image.Image:
+    """Tall poster lockup: big hex+bolt up top, wordmark + tagline below.
+
+    Used for the optional Microsoft Store 720x1080 / 1080x1080 logos
+    that appear on featured-app surfaces.
+    """
+    img = Image.new("RGBA", (width, height), BACKGROUND)
+    draw = ImageDraw.Draw(img)
+
+    # Subtle radial vignette so the centre reads brighter and the corners
+    # gently fade to true obsidian. Done by stamping a few transparent
+    # ellipses at low alpha — cheap and looks editorial.
+    for r_factor, alpha in ((0.55, 16), (0.40, 14), (0.28, 10)):
+        rx = int(width * r_factor)
+        ry = int(height * r_factor * 0.55)
+        cx, cy = width // 2, int(height * 0.42)
+        glow = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        gdraw = ImageDraw.Draw(glow)
+        gdraw.ellipse(
+            [(cx - rx, cy - ry), (cx + rx, cy + ry)],
+            fill=(88, 211, 255, alpha),
+        )
+        img.alpha_composite(glow)
+    draw = ImageDraw.Draw(img)
+
+    # ---- Hex+bolt mark in the upper third -----------------------------
+    glyph_size = int(min(width * 0.48, height * 0.32))
+    mark_cx = width / 2
+    mark_cy = height * 0.32
+    _draw_hex_bolt(draw, mark_cx, mark_cy, glyph_size)
+
+    # ---- Wordmark below the mark --------------------------------------
+    title_size = max(28, int(round(width * 0.085)))
+    title_font = _load_font(title_size, weight="bold")
+    title = "GAMEBOOSTAPEX"
+    bbox = draw.textbbox((0, 0), title, font=title_font)
+    tw = bbox[2] - bbox[0]
+    th = bbox[3] - bbox[1]
+    title_y = int(height * 0.56)
+    title_x = (width - tw) // 2 - bbox[0]
+    draw.text((title_x, title_y - bbox[1]), title, font=title_font, fill=TEXT_PRIMARY)
+
+    # Cyan rule under the wordmark.
+    rule_y = title_y + th + max(8, int(width * 0.012))
+    rule_w = int(width * 0.36)
+    draw.line(
+        [((width - rule_w) // 2, rule_y), ((width + rule_w) // 2, rule_y)],
+        fill=ACCENT_CYAN,
+        width=max(1, int(width * 0.003)),
+    )
+
+    # ---- Tagline ------------------------------------------------------
+    tag_size = max(14, int(round(width * 0.030)))
+    tag_font = _load_font(tag_size, weight="bold")
+    tagline = "PERFORMANCE TUNER FOR GAMERS"
+    tbbox = draw.textbbox((0, 0), tagline, font=tag_font)
+    ttw = tbbox[2] - tbbox[0]
+    tag_y = rule_y + max(16, int(width * 0.020))
+    draw.text(
+        ((width - ttw) // 2 - tbbox[0], tag_y - tbbox[1]),
+        tagline,
+        font=tag_font,
+        fill=ACCENT_CYAN,
+    )
+
+    return img
+
+
+def _render_marketing(name: str, width: int, height: int) -> Image.Image:
+    """Dispatch to the right layout for marketing-only tiles."""
+    aspect = width / height
+    # Tall poster (9:16) and square (1:1) both look right with the
+    # vertical lockup — text reads top-to-bottom in either case.
+    if aspect <= 1.05:
+        return _render_portrait(width, height)
+    # Wide hero (23:10): use the horizontal lockup so the wordmark sits
+    # to the right of the mark.
+    return _render_horizontal(width, height)
 
 
 def _render_tile(name: str, width: int, height: int) -> Image.Image:
@@ -223,7 +329,13 @@ def _render_tile(name: str, width: int, height: int) -> Image.Image:
     return _render_square(width, height, with_text=True)
 
 
-def main(out_dir: str, *, force: bool = False) -> int:
+def main(
+    out_dir: str,
+    *,
+    force: bool = False,
+    marketing: bool = False,
+    marketing_dir: str = "marketing_assets",
+) -> int:
     target = Path(out_dir)
     target.mkdir(parents=True, exist_ok=True)
     for name, w, h in TILES:
@@ -234,6 +346,19 @@ def main(out_dir: str, *, force: bool = False) -> int:
         img = _render_tile(name, w, h)
         img.save(dst, format="PNG", optimize=True)
         print(f"[ok]   wrote {dst} ({w}x{h})")
+
+    if marketing:
+        mtarget = Path(marketing_dir)
+        mtarget.mkdir(parents=True, exist_ok=True)
+        for name, w, h in MARKETING_TILES:
+            dst = mtarget / name
+            if dst.exists() and not force:
+                print(f"[skip] {dst} already exists, keeping it")
+                continue
+            img = _render_marketing(name, w, h)
+            img.save(dst, format="PNG", optimize=True)
+            print(f"[ok]   wrote {dst} ({w}x{h})")
+
     return 0
 
 
@@ -241,11 +366,20 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "out", nargs="?", default="msix/Assets",
-        help="output directory (default ./msix/Assets)",
+        help="output directory for MSIX tiles (default ./msix/Assets)",
     )
     parser.add_argument(
         "--force", action="store_true",
         help="regenerate every tile, even if a file already exists",
     )
+    parser.add_argument(
+        "--marketing", action="store_true",
+        help="also emit optional 720x1080 / 1080x1080 / 2400x1200 "
+             "Store-listing logos into ./marketing_assets/",
+    )
+    parser.add_argument(
+        "--marketing-out", default="marketing_assets",
+        help="output directory for marketing tiles (default ./marketing_assets)",
+    )
     ns = parser.parse_args()
-    sys.exit(main(ns.out, force=ns.force))
+    sys.exit(main(ns.out, force=ns.force, marketing=ns.marketing, marketing_dir=ns.marketing_out))

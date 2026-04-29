@@ -59,6 +59,7 @@ store_screenshots/
 # Keeping them out of the repo means we never commit binary art and the
 # tile design is always reproducible from source.
 msix/Assets/*.png
+marketing_assets/
 
 # ---- Secrets ----
 .env
