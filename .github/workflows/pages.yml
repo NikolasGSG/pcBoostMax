@@ -16,8 +16,17 @@ on:
       - '.github/workflows/pages.yml'
   # Re-deploy whenever the release workflow publishes a new binary, so the
   # /downloads/ mirror stays in sync with the latest GitHub Release.
+  #
+  # NOTE: ``release: published`` does NOT fire when the release was created
+  # via the workflow's built-in GITHUB_TOKEN (a GitHub safeguard against
+  # workflow-trigger recursion). We therefore ALSO listen on
+  # ``workflow_run`` after Build & Release completes, which is one of the
+  # few events that crosses the GITHUB_TOKEN boundary.
   release:
     types: [published]
+  workflow_run:
+    workflows: ["Build & Release"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -32,6 +41,12 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # When triggered by ``workflow_run``, only proceed if the upstream
+    # Build & Release run actually succeeded. Otherwise we'd mirror a
+    # stale or missing artefact set after every failed release attempt.
+    # Other triggers (push / release / workflow_dispatch) are always
+    # allowed.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4
 
