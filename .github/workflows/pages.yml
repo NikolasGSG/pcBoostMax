@@ -48,7 +48,7 @@ jobs:
     # allowed.
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
